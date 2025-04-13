@@ -1,8 +1,7 @@
 
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { FileText, Calendar, BarChart, AlertCircle, Clock, Eye } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { FileText, Calendar, AlertCircle, Clock, CheckCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useNavigate } from "react-router-dom";
 
@@ -41,40 +40,39 @@ export const AssignmentCard = ({
     "completed": { 
       label: "Completed", 
       color: "bg-green-100 text-green-800",
-      icon: BarChart
+      icon: CheckCircle
     },
   };
   
   const StatusIcon = statusConfig[status].icon;
   
-  const handleViewAssignment = () => {
-    navigate(`/assignment/${id}`);
-  };
-  
   return (
-    <Card className="hover:shadow-md transition-all duration-300 border border-gray-200 overflow-hidden">
-      <CardHeader className="pb-2">
-        <div className="flex justify-between items-start">
-          <CardTitle className="text-lg font-semibold">{title}</CardTitle>
+    <Card 
+      className="overflow-hidden hover:shadow-md transition-all duration-300 group border border-gray-200 active:bg-gray-50"
+      onClick={() => navigate(`/assignment/${id}`)}
+    >
+      <CardContent className="p-4">
+        <div className="flex items-center justify-between mb-2">
+          <h3 className="font-semibold">{title}</h3>
           <Badge variant="outline" className={statusConfig[status].color}>
             {statusConfig[status].label}
           </Badge>
         </div>
-      </CardHeader>
-      <CardContent>
-        <div className="flex flex-col space-y-3 mt-2">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <FileText size={16} />
-            <span>{subject}</span>
-            {maxMarks && <span className="ml-auto font-medium">{maxMarks} marks</span>}
-          </div>
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Calendar size={16} />
-            <span>{date}</span>
+        
+        <div className="flex flex-col space-y-3">
+          <div className="flex items-center justify-between text-sm text-muted-foreground">
+            <div className="flex items-center gap-1.5">
+              <FileText size={16} />
+              <span>{subject}</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <Calendar size={16} />
+              <span>{date}</span>
+            </div>
           </div>
           
           {status !== "draft" && (
-            <div className="mt-2">
+            <div>
               <div className="flex justify-between text-xs text-muted-foreground mb-1">
                 <span>Progress</span>
                 <span>{completion}%</span>
@@ -84,23 +82,13 @@ export const AssignmentCard = ({
           )}
           
           {status === "draft" && (
-            <div className="flex items-center gap-2 text-sm text-amber-600 mt-2">
+            <div className="flex items-center gap-1.5 text-sm text-amber-600">
               <StatusIcon size={16} />
               <span>Setup required</span>
             </div>
           )}
         </div>
       </CardContent>
-      <CardFooter className="pt-0">
-        <Button 
-          className="w-full" 
-          variant={status === "draft" ? "default" : "outline"}
-          onClick={handleViewAssignment}
-        >
-          <Eye size={16} className="mr-2" />
-          {status === "draft" ? "Complete Setup" : "View Assignment"}
-        </Button>
-      </CardFooter>
     </Card>
   );
 };

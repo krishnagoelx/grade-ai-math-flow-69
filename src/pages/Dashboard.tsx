@@ -1,172 +1,154 @@
 
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, Upload } from "lucide-react";
+import { Plus, ChevronRight, BarChart2, FileText, Layers, Users } from "lucide-react";
 import { ClassCard } from "@/components/Dashboard/ClassCard";
-import { useToast } from "@/hooks/use-toast";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { ClassData } from "@/types/class";
+import { AssignmentCard } from "@/components/Dashboard/AssignmentCard";
 
 const Dashboard = () => {
-  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
-  const { toast } = useToast();
   const navigate = useNavigate();
-  
-  // Mock data for demonstration
-  const [classes, setClasses] = useState<ClassData[]>([
-    { 
-      id: "class-001",
-      name: "Mathematics Grade 10", 
-      section: "10A", 
-      studentCount: 32, 
-      students: [],
-      assignments: [
-        { 
-          id: "assign-001",
-          title: "Linear Equations Test", 
-          subject: "Algebra", 
-          date: "Apr 10, 2023", 
-          status: "completed", 
-          completion: 100 
-        },
-        { 
-          id: "assign-002",
-          title: "Probability Quiz", 
-          subject: "Statistics", 
-          date: "Apr 5, 2023", 
-          status: "active", 
-          completion: 68 
-        }
-      ]
+
+  // Mock data for classes
+  const classes = [
+    {
+      id: "class-1",
+      name: "Algebra",
+      studentCount: 28,
+      assignments: 5,
+      pending: 2,
     },
-    { 
-      id: "class-002",
-      name: "Mathematics Grade 11", 
-      section: "11B", 
-      studentCount: 28, 
-      students: [],
-      assignments: [
-        { 
-          id: "assign-003",
-          title: "Calculus Midterm", 
-          subject: "Calculus", 
-          date: "Apr 3, 2023", 
-          status: "draft", 
-          completion: 0 
-        }
-      ]
+    {
+      id: "class-2",
+      name: "Geometry",
+      studentCount: 32,
+      assignments: 3,
+      pending: 1,
+    },
+    {
+      id: "class-3",
+      name: "Calculus",
+      studentCount: 24,
+      assignments: 7,
+      pending: 0,
     }
-  ]);
-  
-  const handleCreateClass = (e: React.FormEvent) => {
-    e.preventDefault();
-    const formData = new FormData(e.target as HTMLFormElement);
-    const className = formData.get('className') as string;
-    const section = formData.get('section') as string;
-    
-    if (!className || !section) {
-      toast({
-        title: "Missing information",
-        description: "Please fill all required fields",
-        variant: "destructive"
-      });
-      return;
+  ];
+
+  // Mock data for recent assignments
+  const recentAssignments = [
+    {
+      id: "assignment-1",
+      title: "Linear Equations Quiz",
+      subject: "Algebra",
+      date: "10 April 2025",
+      status: "active",
+      completion: 70,
+    },
+    {
+      id: "assignment-2",
+      title: "Trigonometry Mid-term",
+      subject: "Trigonometry",
+      date: "5 April 2025",
+      status: "completed",
+      completion: 100,
     }
-    
-    // In a real app, this would be an API call
-    const newClass: ClassData = {
-      id: `class-${Date.now()}`,
-      name: className,
-      section: section,
-      studentCount: 0,
-      students: [],
-      assignments: []
-    };
-    
-    setClasses([...classes, newClass]);
-    setIsCreateDialogOpen(false);
-    
-    toast({
-      title: "Class created",
-      description: `${className} (${section}) has been created successfully`
-    });
-  };
-  
-  const handleImportStudents = (classId: string) => {
-    toast({
-      title: "Import triggered",
-      description: "Student import functionality would be triggered here"
-    });
-  };
-  
-  const handleClassClick = (classId: string) => {
-    navigate(`/class/${classId}`);
-  };
+  ];
 
   return (
     <div className="space-y-8">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Classes Dashboard</h1>
-          <p className="text-muted-foreground">Manage your classes and assignments</p>
-        </div>
-        <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-          <DialogTrigger asChild>
-            <Button>
-              <PlusCircle className="mr-2 h-4 w-4" />
-              Create Class
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Create a New Class</DialogTitle>
-            </DialogHeader>
-            <form onSubmit={handleCreateClass} className="space-y-4 mt-4">
-              <div className="space-y-2">
-                <Label htmlFor="className">Class Name</Label>
-                <Input id="className" name="className" placeholder="e.g., Mathematics Grade 10" required />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="section">Section</Label>
-                <Input id="section" name="section" placeholder="e.g., 10A" required />
-              </div>
-              <div className="flex justify-between mt-6">
-                <Button variant="outline" type="button" onClick={() => setIsCreateDialogOpen(false)}>
-                  Cancel
-                </Button>
-                <Button type="submit">Create Class</Button>
-              </div>
-            </form>
-          </DialogContent>
-        </Dialog>
+      <div className="space-y-2">
+        <h1 className="text-2xl font-bold">Dashboard</h1>
+        <p className="text-muted-foreground">Manage your classes and assignments</p>
       </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {classes.map((classItem) => (
-          <ClassCard
-            key={classItem.id}
-            id={classItem.id}
-            name={classItem.name}
-            section={classItem.section}
-            studentCount={classItem.studentCount}
-            assignments={classItem.assignments.length}
-            pending={classItem.assignments.filter(a => a.status === "active").length}
-            onImportStudents={() => handleImportStudents(classItem.id)}
-            onClick={() => handleClassClick(classItem.id)}
-          />
-        ))}
-        
-        <div className="border border-dashed rounded-lg flex flex-col items-center justify-center p-6 h-full min-h-[200px]">
-          <h3 className="font-medium mb-2">Add a New Class</h3>
-          <p className="text-sm text-muted-foreground text-center mb-4">Create a new class to manage students and assignments</p>
-          <Button variant="outline" onClick={() => setIsCreateDialogOpen(true)}>
-            <PlusCircle size={16} className="mr-2" />
-            Create Class
+
+      {/* Quick Action Buttons */}
+      <div className="grid grid-cols-2 gap-3">
+        <Button 
+          variant="outline" 
+          className="h-16 flex-col space-y-1 shadow-sm border-primary/20 hover:border-primary hover:bg-primary/5"
+          onClick={() => navigate("/create-assignment")}
+        >
+          <Plus size={18} className="text-primary" />
+          <span className="text-sm font-medium">Create Class</span>
+        </Button>
+        <Button 
+          variant="outline" 
+          className="h-16 flex-col space-y-1 shadow-sm border-primary/20 hover:border-primary hover:bg-primary/5"
+          onClick={() => navigate("/analytics")}
+        >
+          <BarChart2 size={18} className="text-primary" />
+          <span className="text-sm font-medium">Analytics</span>
+        </Button>
+      </div>
+
+      {/* Classes Section */}
+      <section>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-semibold">Your Classes</h2>
+          <Button variant="ghost" size="sm" className="text-primary" onClick={() => navigate("/classes")}>
+            View All <ChevronRight size={16} className="ml-1" />
           </Button>
         </div>
+        
+        <div className="grid grid-cols-1 gap-4">
+          {classes.map((cls) => (
+            <ClassCard
+              key={cls.id}
+              id={cls.id}
+              name={cls.name}
+              section="" // Removed as per request
+              studentCount={cls.studentCount}
+              assignments={cls.assignments}
+              pending={cls.pending}
+              onClick={() => navigate(`/class/${cls.id}`)}
+              onImportStudents={() => {}} // Functionality moved elsewhere
+            />
+          ))}
+        </div>
+      </section>
+
+      {/* Recent Assignments Section */}
+      <section>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-semibold">Recent Assignments</h2>
+          <Button variant="ghost" size="sm" className="text-primary" onClick={() => navigate("/assignments")}>
+            View All <ChevronRight size={16} className="ml-1" />
+          </Button>
+        </div>
+        
+        <div className="grid grid-cols-1 gap-4">
+          {recentAssignments.map((assignment) => (
+            <AssignmentCard
+              key={assignment.id}
+              id={assignment.id}
+              title={assignment.title}
+              subject={assignment.subject}
+              date={assignment.date}
+              status={assignment.status}
+              completion={assignment.completion}
+            />
+          ))}
+        </div>
+      </section>
+
+      {/* Bottom Navigation */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-between px-4 py-2 z-10">
+        <Button variant="ghost" className="flex-1 flex flex-col items-center py-2 h-auto" onClick={() => navigate("/")}>
+          <Layers size={20} />
+          <span className="text-xs mt-1">Classes</span>
+        </Button>
+        <Button variant="ghost" className="flex-1 flex flex-col items-center py-2 h-auto" onClick={() => navigate("/create-assignment")}>
+          <FileText size={20} />
+          <span className="text-xs mt-1">Assignments</span>
+        </Button>
+        <Button variant="ghost" className="flex-1 flex flex-col items-center py-2 h-auto" onClick={() => navigate("/analytics")}>
+          <BarChart2 size={20} />
+          <span className="text-xs mt-1">Analytics</span>
+        </Button>
+        <Button variant="ghost" className="flex-1 flex flex-col items-center py-2 h-auto" onClick={() => navigate("/students")}>
+          <Users size={20} />
+          <span className="text-xs mt-1">Students</span>
+        </Button>
       </div>
     </div>
   );
