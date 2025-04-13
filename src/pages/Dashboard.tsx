@@ -41,7 +41,7 @@ const Dashboard = () => {
       title: "Linear Equations Quiz",
       subject: "Algebra",
       date: "10 April 2025",
-      status: "active",
+      status: "active" as "draft" | "active" | "completed",
       completion: 70,
     },
     {
@@ -49,7 +49,7 @@ const Dashboard = () => {
       title: "Trigonometry Mid-term",
       subject: "Trigonometry",
       date: "5 April 2025",
-      status: "completed",
+      status: "completed" as "draft" | "active" | "completed",
       completion: 100,
     }
   ];
