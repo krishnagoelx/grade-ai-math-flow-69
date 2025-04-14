@@ -1,7 +1,6 @@
 
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { User } from "lucide-react";
-import { cn } from "@/lib/utils";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,24 +8,24 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { GraduationCap } from "lucide-react";
 
 export const MobileHeader = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   
   return (
     <header className="sticky top-0 z-10 bg-white border-b border-gray-200 shadow-sm">
       <div className="flex items-center justify-between px-4 py-3">
         <div className="flex items-center">
-          <GraduationCap size={28} className="text-primary mr-2" />
-          <span className="text-xl font-bold text-primary">GradeAI</span>
+          <div className="w-10 h-10 rounded-full bg-[#7359F8] flex items-center justify-center mr-2">
+            <span className="text-white font-bold">G</span>
+          </div>
+          <span className="text-xl font-bold text-[#7359F8]">GradeAI</span>
         </div>
         
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="rounded-full h-9 w-9 bg-primary/10">
-              <User size={18} className="text-primary" />
+            <Button variant="ghost" size="icon" className="rounded-full h-9 w-9 bg-gray-100">
+              <User size={18} />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">

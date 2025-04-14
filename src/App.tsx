@@ -8,6 +8,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AppLayout } from "./components/Layout/AppLayout";
 import Dashboard from "./pages/Dashboard";
 import CreateAssignment from "./pages/CreateAssignment";
+import CreateClass from "./pages/CreateClass";
 import GradingPage from "./pages/GradingPage";
 import AnalyticsPage from "./pages/AnalyticsPage";
 import StudentView from "./pages/StudentView";
@@ -33,6 +34,7 @@ const App = () => {
                 <Route index element={<Dashboard />} />
                 <Route path="dashboard" element={<Dashboard />} />
                 <Route path="class/:classId" element={<ClassDetail />} />
+                <Route path="create-class" element={<CreateClass />} />
                 <Route path="assignment/:assignmentId" element={<AssignmentDetail />} />
                 <Route path="assignment/setup/:assignmentId" element={<AssignmentSetup />} />
                 <Route path="assignment/:assignmentId/analytics" element={<AssignmentAnalytics />} />

@@ -37,14 +37,14 @@ export const ClassCard = ({
           )}
         </div>
         
-        <div className="flex items-center gap-6 text-sm text-muted-foreground">
+        <div className="flex items-center justify-between text-sm text-muted-foreground">
           <div className="flex items-center gap-1.5">
             <Users size={16} />
-            <span>{studentCount}</span>
+            <span>{studentCount} Students</span>
           </div>
           <div className="flex items-center gap-1.5">
             <FileText size={16} />
-            <span>{assignments}</span>
+            <span>{assignments} Assignments</span>
           </div>
         </div>
       </CardContent>

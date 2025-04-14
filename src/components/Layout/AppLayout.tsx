@@ -1,14 +1,20 @@
 
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import { MobileHeader } from "./MobileHeader";
 import { cn } from "@/lib/utils";
 
 export const AppLayout = () => {
+  const location = useLocation();
+  const isDashboard = location.pathname === "/" || location.pathname === "/dashboard";
+
   return (
     <div className="flex flex-col h-screen bg-gray-50">
-      <MobileHeader />
-      <main className="flex-1 overflow-auto px-4 py-5 transition-all duration-300">
-        <div className="mx-auto max-w-3xl pb-20">
+      {isDashboard && <MobileHeader />}
+      <main className={cn(
+        "flex-1 overflow-auto px-4 py-5 transition-all duration-300",
+        !isDashboard && "pt-2" // Less padding when no header
+      )}>
+        <div className="mx-auto max-w-3xl pb-6">
           <Outlet />
         </div>
       </main>

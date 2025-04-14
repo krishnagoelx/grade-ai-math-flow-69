@@ -48,12 +48,12 @@ export const AssignmentCard = ({
   
   return (
     <Card 
-      className="overflow-hidden hover:shadow-md transition-all duration-300 group border border-gray-200 active:bg-gray-50"
+      className="overflow-hidden hover:shadow-md transition-all duration-300 border border-gray-200 active:bg-gray-50 w-full"
       onClick={() => navigate(`/assignment/${id}`)}
     >
       <CardContent className="p-4">
         <div className="flex items-center justify-between mb-2">
-          <h3 className="font-semibold">{title}</h3>
+          <h3 className="font-semibold text-base truncate pr-2">{title}</h3>
           <Badge variant="outline" className={statusConfig[status].color}>
             {statusConfig[status].label}
           </Badge>
@@ -62,13 +62,14 @@ export const AssignmentCard = ({
         <div className="flex flex-col space-y-3">
           <div className="flex items-center justify-between text-sm text-muted-foreground">
             <div className="flex items-center gap-1.5">
-              <FileText size={16} />
-              <span>{subject}</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <Calendar size={16} />
+              <Calendar size={14} />
               <span>{date}</span>
             </div>
+            {maxMarks && (
+              <div className="text-sm">
+                {maxMarks} marks
+              </div>
+            )}
           </div>
           
           {status !== "draft" && (
@@ -83,7 +84,7 @@ export const AssignmentCard = ({
           
           {status === "draft" && (
             <div className="flex items-center gap-1.5 text-sm text-amber-600">
-              <StatusIcon size={16} />
+              <StatusIcon size={14} />
               <span>Setup required</span>
             </div>
           )}

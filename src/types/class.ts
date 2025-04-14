@@ -5,6 +5,7 @@ export interface Student {
   email: string;
   class: string;
   roll: string;
+  mobile?: string;
 }
 
 export interface ClassData {

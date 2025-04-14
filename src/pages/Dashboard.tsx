@@ -2,32 +2,36 @@
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, ChevronRight, BarChart2, FileText, Layers, Users } from "lucide-react";
+import { Plus, Search, Users, FileText, BarChart2 } from "lucide-react";
 import { ClassCard } from "@/components/Dashboard/ClassCard";
 import { AssignmentCard } from "@/components/Dashboard/AssignmentCard";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { useState } from "react";
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Mock data for classes
   const classes = [
     {
       id: "class-1",
-      name: "Algebra",
+      name: "10 A",
       studentCount: 28,
       assignments: 5,
       pending: 2,
     },
     {
       id: "class-2",
-      name: "Geometry",
+      name: "11 B",
       studentCount: 32,
       assignments: 3,
       pending: 1,
     },
     {
       id: "class-3",
-      name: "Calculus",
+      name: "12 C",
       studentCount: 24,
       assignments: 7,
       pending: 0,
@@ -43,6 +47,7 @@ const Dashboard = () => {
       date: "10 April 2025",
       status: "active" as "draft" | "active" | "completed",
       completion: 70,
+      maxMarks: 50,
     },
     {
       id: "assignment-2",
@@ -51,105 +56,91 @@ const Dashboard = () => {
       date: "5 April 2025",
       status: "completed" as "draft" | "active" | "completed",
       completion: 100,
+      maxMarks: 100,
     }
   ];
 
-  return (
-    <div className="space-y-8">
-      <div className="space-y-2">
-        <h1 className="text-2xl font-bold">Dashboard</h1>
-        <p className="text-muted-foreground">Manage your classes and assignments</p>
-      </div>
+  const filteredClasses = classes.filter(cls => 
+    cls.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
-      {/* Quick Action Buttons */}
-      <div className="grid grid-cols-2 gap-3">
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center mb-6">
+        <div>
+          <h1 className="text-2xl font-bold text-left">Dashboard</h1>
+          <p className="text-muted-foreground text-left">Manage your classes</p>
+        </div>
         <Button 
-          variant="outline" 
-          className="h-16 flex-col space-y-1 shadow-sm border-primary/20 hover:border-primary hover:bg-primary/5"
-          onClick={() => navigate("/create-assignment")}
-        >
-          <Plus size={18} className="text-primary" />
-          <span className="text-sm font-medium">Create Class</span>
-        </Button>
-        <Button 
-          variant="outline" 
-          className="h-16 flex-col space-y-1 shadow-sm border-primary/20 hover:border-primary hover:bg-primary/5"
+          className="rounded-full h-10 w-10 p-0 bg-[#7359F8] hover:bg-[#5e47c9]" 
           onClick={() => navigate("/analytics")}
         >
-          <BarChart2 size={18} className="text-primary" />
-          <span className="text-sm font-medium">Analytics</span>
+          <BarChart2 size={18} />
         </Button>
       </div>
+
+      {/* Search Bar */}
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+        <Input
+          placeholder="Search class..."
+          className="pl-9 bg-white rounded-lg border-muted"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+      </div>
+
+      {/* Create Class Button */}
+      <Button 
+        className="w-full bg-[#7359F8] hover:bg-[#5e47c9] text-white rounded-lg h-12 shadow-sm"
+        onClick={() => navigate("/create-class")}
+      >
+        <Plus size={18} className="mr-2" />
+        Create New Class
+      </Button>
 
       {/* Classes Section */}
       <section>
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold">Your Classes</h2>
-          <Button variant="ghost" size="sm" className="text-primary" onClick={() => navigate("/classes")}>
-            View All <ChevronRight size={16} className="ml-1" />
-          </Button>
-        </div>
+        <h2 className="text-lg font-semibold mb-3 text-left">Your Classes</h2>
         
         <div className="grid grid-cols-1 gap-4">
-          {classes.map((cls) => (
+          {filteredClasses.map((cls) => (
             <ClassCard
               key={cls.id}
               id={cls.id}
               name={cls.name}
-              section="" // Removed as per request
+              section=""
               studentCount={cls.studentCount}
               assignments={cls.assignments}
               pending={cls.pending}
               onClick={() => navigate(`/class/${cls.id}`)}
-              onImportStudents={() => {}} // Functionality moved elsewhere
+              onImportStudents={() => {}}
             />
           ))}
         </div>
       </section>
 
       {/* Recent Assignments Section */}
-      <section>
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold">Recent Assignments</h2>
-          <Button variant="ghost" size="sm" className="text-primary" onClick={() => navigate("/assignments")}>
-            View All <ChevronRight size={16} className="ml-1" />
-          </Button>
-        </div>
-        
-        <div className="grid grid-cols-1 gap-4">
-          {recentAssignments.map((assignment) => (
-            <AssignmentCard
-              key={assignment.id}
-              id={assignment.id}
-              title={assignment.title}
-              subject={assignment.subject}
-              date={assignment.date}
-              status={assignment.status}
-              completion={assignment.completion}
-            />
-          ))}
-        </div>
-      </section>
-
-      {/* Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-between px-4 py-2 z-10">
-        <Button variant="ghost" className="flex-1 flex flex-col items-center py-2 h-auto" onClick={() => navigate("/")}>
-          <Layers size={20} />
-          <span className="text-xs mt-1">Classes</span>
-        </Button>
-        <Button variant="ghost" className="flex-1 flex flex-col items-center py-2 h-auto" onClick={() => navigate("/create-assignment")}>
-          <FileText size={20} />
-          <span className="text-xs mt-1">Assignments</span>
-        </Button>
-        <Button variant="ghost" className="flex-1 flex flex-col items-center py-2 h-auto" onClick={() => navigate("/analytics")}>
-          <BarChart2 size={20} />
-          <span className="text-xs mt-1">Analytics</span>
-        </Button>
-        <Button variant="ghost" className="flex-1 flex flex-col items-center py-2 h-auto" onClick={() => navigate("/students")}>
-          <Users size={20} />
-          <span className="text-xs mt-1">Students</span>
-        </Button>
-      </div>
+      {recentAssignments.length > 0 && (
+        <section>
+          <h2 className="text-lg font-semibold mb-3 text-left">Recent Assignments</h2>
+          
+          <div className="grid grid-cols-1 gap-4">
+            {recentAssignments.map((assignment) => (
+              <AssignmentCard
+                key={assignment.id}
+                id={assignment.id}
+                title={assignment.title}
+                subject={assignment.subject}
+                date={assignment.date}
+                status={assignment.status}
+                completion={assignment.completion}
+                maxMarks={assignment.maxMarks}
+              />
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 };
