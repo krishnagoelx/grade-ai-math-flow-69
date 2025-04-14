@@ -51,15 +51,6 @@ const ClassDetail = () => {
         maxMarks: 30 
       },
       { 
-        id: "assign-003",
-        title: "Geometry Problems", 
-        subject: "Geometry", 
-        date: "Mar 28, 2025", 
-        status: "draft" as const, 
-        completion: 0,
-        maxMarks: 25
-      },
-      { 
         id: "assign-004",
         title: "Calculus Basics", 
         subject: "Calculus", 
@@ -95,15 +86,6 @@ const ClassDetail = () => {
         status: "active" as const, 
         completion: 25,
         maxMarks: 45
-      },
-      { 
-        id: "assign-008",
-        title: "Algebra Equations", 
-        subject: "Algebra", 
-        date: "Apr 20, 2025", 
-        status: "draft" as const, 
-        completion: 0,
-        maxMarks: 35
       },
       { 
         id: "assign-009",

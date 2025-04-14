@@ -2,10 +2,16 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Upload, Download, PlusCircle, Info } from "lucide-react";
+import { Search, Upload, Download, PlusCircle, Eye, FileText, User, MoreVertical } from "lucide-react";
 import { Student } from "@/types/class";
 import { useToast } from "@/hooks/use-toast";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
 import {
   Tooltip,
   TooltipContent,
@@ -44,8 +50,22 @@ export const StudentsTab = ({ students }: StudentsTabProps) => {
 
   const handleViewStudent = (id: string) => {
     toast({
-      title: "View Student",
+      title: "View Student Profile",
       description: `Viewing student with ID: ${id}`,
+    });
+  };
+  
+  const handleViewAssignments = (id: string) => {
+    toast({
+      title: "View Assignments",
+      description: `Viewing assignments for student with ID: ${id}`,
+    });
+  };
+  
+  const handleEditDetails = (id: string) => {
+    toast({
+      title: "Edit Student Details",
+      description: `Editing details for student with ID: ${id}`,
     });
   };
 
@@ -110,11 +130,11 @@ export const StudentsTab = ({ students }: StudentsTabProps) => {
       </div>
       
       <div className="border rounded-md bg-white overflow-hidden">
-        <ScrollArea className="h-[400px]">
-          <div className="overflow-x-auto">
+        <div className="overflow-x-auto">
+          <div className="sticky top-0 z-10 bg-muted/50 border-b">
             <table className="w-full">
-              <thead className="sticky top-0 z-10">
-                <tr className="border-b bg-muted/50">
+              <thead>
+                <tr>
                   <th className="h-10 px-4 text-left align-middle font-medium text-muted-foreground">Name</th>
                   <th className="h-10 px-4 text-left align-middle font-medium text-muted-foreground">Class</th>
                   <th className="h-10 px-4 text-left align-middle font-medium text-muted-foreground">Roll No.</th>
@@ -123,6 +143,11 @@ export const StudentsTab = ({ students }: StudentsTabProps) => {
                   <th className="h-10 px-4 text-center align-middle font-medium text-muted-foreground">Actions</th>
                 </tr>
               </thead>
+            </table>
+          </div>
+          
+          <ScrollArea className="h-[400px]" orientation="horizontal">
+            <table className="w-full min-w-max">
               <tbody>
                 {filteredStudents.map((student) => (
                   <tr key={student.id} className="border-b hover:bg-muted/30 transition-colors">
@@ -132,13 +157,27 @@ export const StudentsTab = ({ students }: StudentsTabProps) => {
                     <td className="p-4">{student.mobile || "-"}</td>
                     <td className="p-4 truncate max-w-[150px]">{student.email}</td>
                     <td className="p-4 text-center">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleViewStudent(student.id)}
-                      >
-                        View Details
-                      </Button>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon">
+                            <MoreVertical size={16} />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-56 bg-white">
+                          <DropdownMenuItem onClick={() => handleViewStudent(student.id)}>
+                            <Eye className="h-4 w-4 mr-2" />
+                            <span>View Profile</span>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleViewAssignments(student.id)}>
+                            <FileText className="h-4 w-4 mr-2" />
+                            <span>View Assignments</span>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleEditDetails(student.id)}>
+                            <User className="h-4 w-4 mr-2" />
+                            <span>Edit Details</span>
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </td>
                   </tr>
                 ))}
@@ -151,8 +190,8 @@ export const StudentsTab = ({ students }: StudentsTabProps) => {
                 )}
               </tbody>
             </table>
-          </div>
-        </ScrollArea>
+          </ScrollArea>
+        </div>
       </div>
     </div>
   );
