@@ -146,7 +146,7 @@ export const StudentsTab = ({ students }: StudentsTabProps) => {
             </table>
           </div>
           
-          <ScrollArea className="h-[400px]" orientation="horizontal">
+          <ScrollArea className="h-[400px]">
             <table className="w-full min-w-max">
               <tbody>
                 {filteredStudents.map((student) => (
