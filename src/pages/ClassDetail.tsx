@@ -6,6 +6,7 @@ import { ClassData } from "@/types/class";
 import { ClassSummary } from "@/components/Class/ClassSummary";
 import { AssignmentsTab } from "@/components/Class/AssignmentsTab";
 import { StudentsTab } from "@/components/Class/StudentsTab";
+import { ClassAnalytics } from "@/components/Class/ClassAnalytics";
 
 const ClassDetail = () => {
   const { classId } = useParams<{ classId: string }>();
@@ -123,6 +124,7 @@ const ClassDetail = () => {
             classId={classData.id} 
             assignments={classData.assignments} 
           />
+          <ClassAnalytics assignments={classData.assignments} />
         </TabsContent>
         
         <TabsContent value="students" className="mt-4">

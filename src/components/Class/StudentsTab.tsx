@@ -139,7 +139,7 @@ export const StudentsTab = ({ students }: StudentsTabProps) => {
       <div className="border rounded-md bg-white overflow-hidden">
         <div className="overflow-x-auto">
           <div className="sticky top-0 z-10 bg-muted/50 border-b">
-            <div className={isMobile ? "min-w-[500px]" : "min-w-[600px]"}>
+            <div className={isMobile ? "min-w-[600px]" : "min-w-[600px]"}>
               <div className="grid grid-cols-5 h-10">
                 <div className="px-4 flex items-center font-medium text-muted-foreground">Name</div>
                 <div className="px-4 flex items-center font-medium text-muted-foreground">Class</div>
@@ -150,8 +150,8 @@ export const StudentsTab = ({ students }: StudentsTabProps) => {
             </div>
           </div>
           
-          <ScrollArea className="h-[400px]">
-            <div className={isMobile ? "min-w-[500px]" : "min-w-[600px]"}>
+          <ScrollArea className="h-[calc(100vh-325px)] min-h-[400px]">
+            <div className={isMobile ? "min-w-[600px]" : "min-w-[600px]"}>
               {filteredStudents.map((student) => (
                 <div 
                   key={student.id} 
