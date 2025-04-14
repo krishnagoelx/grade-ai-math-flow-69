@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Upload, Download, PlusCircle, Info } from "lucide-react";
+import { Search, Upload, Download, PlusCircle, MoreVertical, Eye, FileText, User } from "lucide-react";
 import { Student } from "@/types/class";
 import { useToast } from "@/hooks/use-toast";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -12,6 +12,12 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface StudentsTabProps {
   students: Student[];
@@ -44,8 +50,22 @@ export const StudentsTab = ({ students }: StudentsTabProps) => {
 
   const handleViewStudent = (id: string) => {
     toast({
-      title: "View Student",
-      description: `Viewing student with ID: ${id}`,
+      title: "View Student Profile",
+      description: `Viewing profile for student ${id}`,
+    });
+  };
+  
+  const handleViewAssignments = (id: string) => {
+    toast({
+      title: "View Student Assignments",
+      description: `Viewing assignments for student ${id}`,
+    });
+  };
+  
+  const handleEditDetails = (id: string) => {
+    toast({
+      title: "Edit Student",
+      description: `Editing details for student ${id}`,
     });
   };
 
@@ -72,12 +92,13 @@ export const StudentsTab = ({ students }: StudentsTabProps) => {
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant="outline" size="icon" onClick={handleImportStudents}>
-                <Upload size={16} />
+              <Button variant="outline" onClick={handleImportStudents}>
+                <Upload size={16} className="mr-2" />
+                Import
               </Button>
             </TooltipTrigger>
             <TooltipContent>
-              <p>Import Students</p>
+              <p>Import Students from file</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
@@ -85,12 +106,13 @@ export const StudentsTab = ({ students }: StudentsTabProps) => {
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant="outline" size="icon" onClick={handleExportStudents}>
-                <Download size={16} />
+              <Button variant="outline" onClick={handleExportStudents}>
+                <Download size={16} className="mr-2" />
+                Export
               </Button>
             </TooltipTrigger>
             <TooltipContent>
-              <p>Export Students</p>
+              <p>Export Students as CSV</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
@@ -98,31 +120,32 @@ export const StudentsTab = ({ students }: StudentsTabProps) => {
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant="outline" size="icon" onClick={handleAddStudent}>
-                <PlusCircle size={16} />
+              <Button variant="outline" onClick={handleAddStudent}>
+                <PlusCircle size={16} className="mr-2" />
+                Add
               </Button>
             </TooltipTrigger>
             <TooltipContent>
-              <p>Add Student</p>
+              <p>Add New Student</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
       </div>
       
       <div className="border rounded-md bg-white overflow-hidden">
-        <ScrollArea className="h-[400px]">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="sticky top-0 z-10">
-                <tr className="border-b bg-muted/50">
-                  <th className="h-10 px-4 text-left align-middle font-medium text-muted-foreground">Name</th>
-                  <th className="h-10 px-4 text-left align-middle font-medium text-muted-foreground">Class</th>
-                  <th className="h-10 px-4 text-left align-middle font-medium text-muted-foreground">Roll No.</th>
-                  <th className="h-10 px-4 text-left align-middle font-medium text-muted-foreground">Mobile</th>
-                  <th className="h-10 px-4 text-left align-middle font-medium text-muted-foreground">Email</th>
-                  <th className="h-10 px-4 text-center align-middle font-medium text-muted-foreground">Actions</th>
-                </tr>
-              </thead>
+        <div className="overflow-auto">
+          <table className="w-full">
+            <thead className="sticky top-0 z-10">
+              <tr className="border-b bg-muted/50">
+                <th className="h-10 px-4 text-left align-middle font-medium text-muted-foreground">Name</th>
+                <th className="h-10 px-4 text-left align-middle font-medium text-muted-foreground">Class</th>
+                <th className="h-10 px-4 text-left align-middle font-medium text-muted-foreground">Roll No.</th>
+                <th className="h-10 px-4 text-left align-middle font-medium text-muted-foreground">Mobile</th>
+                <th className="h-10 px-4 text-left align-middle font-medium text-muted-foreground">Email</th>
+                <th className="h-10 px-4 text-center align-middle font-medium text-muted-foreground w-[100px]">Actions</th>
+              </tr>
+            </thead>
+            <ScrollArea className="max-h-[400px]">
               <tbody>
                 {filteredStudents.map((student) => (
                   <tr key={student.id} className="border-b hover:bg-muted/30 transition-colors">
@@ -132,13 +155,27 @@ export const StudentsTab = ({ students }: StudentsTabProps) => {
                     <td className="p-4">{student.mobile || "-"}</td>
                     <td className="p-4 truncate max-w-[150px]">{student.email}</td>
                     <td className="p-4 text-center">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleViewStudent(student.id)}
-                      >
-                        View Details
-                      </Button>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon" className="h-8 w-8">
+                            <MoreVertical size={16} />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={() => handleViewStudent(student.id)}>
+                            <Eye className="mr-2 h-4 w-4" />
+                            View Profile
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleViewAssignments(student.id)}>
+                            <FileText className="mr-2 h-4 w-4" />
+                            View Assignments
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleEditDetails(student.id)}>
+                            <User className="mr-2 h-4 w-4" />
+                            Edit Details
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </td>
                   </tr>
                 ))}
@@ -150,9 +187,9 @@ export const StudentsTab = ({ students }: StudentsTabProps) => {
                   </tr>
                 )}
               </tbody>
-            </table>
-          </div>
-        </ScrollArea>
+            </ScrollArea>
+          </table>
+        </div>
       </div>
     </div>
   );

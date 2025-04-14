@@ -3,23 +3,23 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { PlusCircle, Calendar } from "lucide-react";
+import { PlusCircle, Calendar, ChevronDown } from "lucide-react";
 import { AssignmentCard } from "@/components/Dashboard/AssignmentCard";
 import { AssignmentSummary } from "@/types/class";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { format } from "date-fns";
 
 interface AssignmentsTabProps {
   classId: string;
@@ -28,29 +28,37 @@ interface AssignmentsTabProps {
 
 export const AssignmentsTab = ({ classId, assignments }: AssignmentsTabProps) => {
   const navigate = useNavigate();
-  const [selectedMonth, setSelectedMonth] = useState<string>("all");
+  const [dateFrom, setDateFrom] = useState<Date | undefined>(undefined);
+  const [dateTo, setDateTo] = useState<Date | undefined>(undefined);
   
-  const draftAssignments = assignments.filter(a => a.status === "draft");
   const activeAssignments = assignments.filter(a => a.status === "active");
   const completedAssignments = assignments.filter(a => a.status === "completed");
   
-  // Filter completed assignments by month if a specific month is selected
-  const filteredCompletedAssignments = selectedMonth === "all" 
-    ? completedAssignments 
-    : completedAssignments.filter(a => {
-        const assignmentDate = new Date(a.date);
-        return assignmentDate.toLocaleString('default', { month: 'long' }) === selectedMonth;
-      });
+  // Filter completed assignments by date range if dates are selected
+  const filteredCompletedAssignments = completedAssignments.filter(a => {
+    if (!dateFrom && !dateTo) return true;
+    
+    const assignmentDate = new Date(a.date);
+    
+    if (dateFrom && dateTo) {
+      return assignmentDate >= dateFrom && assignmentDate <= dateTo;
+    }
+    
+    if (dateFrom && !dateTo) {
+      return assignmentDate >= dateFrom;
+    }
+    
+    if (!dateFrom && dateTo) {
+      return assignmentDate <= dateTo;
+    }
+    
+    return true;
+  });
   
-  // Generate an array of months from the completed assignments
-  const months = Array.from(
-    new Set(
-      completedAssignments.map(a => {
-        const date = new Date(a.date);
-        return date.toLocaleString('default', { month: 'long' });
-      })
-    )
-  );
+  const clearDateFilter = () => {
+    setDateFrom(undefined);
+    setDateTo(undefined);
+  };
 
   return (
     <div className="space-y-6">
@@ -65,8 +73,8 @@ export const AssignmentsTab = ({ classId, assignments }: AssignmentsTabProps) =>
       {activeAssignments.length > 0 && (
         <div className="space-y-3">
           <h2 className="text-lg font-semibold tracking-tight">Active Assignments</h2>
-          <div className="overflow-x-auto pb-2 -mx-4 px-4">
-            <div className="flex space-x-4 min-w-full" style={{scrollbarWidth: 'none'}}>
+          <ScrollArea className="w-full">
+            <div className="pb-2 flex space-x-4" style={{ minWidth: "100%", overflowX: "auto" }}>
               {activeAssignments.map((assignment) => (
                 <div key={assignment.id} className="w-[270px] flex-shrink-0">
                   <AssignmentCard
@@ -81,30 +89,7 @@ export const AssignmentsTab = ({ classId, assignments }: AssignmentsTabProps) =>
                 </div>
               ))}
             </div>
-          </div>
-        </div>
-      )}
-      
-      {draftAssignments.length > 0 && (
-        <div className="space-y-3">
-          <h2 className="text-lg font-semibold tracking-tight">Drafts</h2>
-          <div className="overflow-x-auto pb-2 -mx-4 px-4">
-            <div className="flex space-x-4 min-w-full" style={{scrollbarWidth: 'none'}}>
-              {draftAssignments.map((assignment) => (
-                <div key={assignment.id} className="w-[270px] flex-shrink-0">
-                  <AssignmentCard
-                    id={assignment.id}
-                    title={assignment.title}
-                    subject={assignment.subject}
-                    date={assignment.date}
-                    status={assignment.status}
-                    completion={assignment.completion}
-                    maxMarks={assignment.maxMarks}
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
+          </ScrollArea>
         </div>
       )}
       
@@ -112,36 +97,64 @@ export const AssignmentsTab = ({ classId, assignments }: AssignmentsTabProps) =>
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold tracking-tight">Completed</h2>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <div>
-                    <Select
-                      value={selectedMonth}
-                      onValueChange={setSelectedMonth}
-                    >
-                      <SelectTrigger className="w-[140px] h-8 text-sm">
+            <Popover>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <PopoverTrigger asChild>
+                      <Button variant="outline" size="sm" className="h-8">
                         <Calendar className="h-4 w-4 mr-2" />
-                        <SelectValue placeholder="Select Month" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">All Months</SelectItem>
-                        {months.map((month) => (
-                          <SelectItem key={month} value={month}>{month}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                        {dateFrom && dateTo 
+                          ? `${format(dateFrom, "MMM d")} - ${format(dateTo, "MMM d")}` 
+                          : dateFrom 
+                            ? `From ${format(dateFrom, "MMM d")}` 
+                            : dateTo 
+                              ? `Until ${format(dateTo, "MMM d")}`
+                              : "Filter by Date"}
+                        <ChevronDown className="h-4 w-4 ml-2" />
+                      </Button>
+                    </PopoverTrigger>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Filter assignments by date range</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              <PopoverContent className="w-auto p-0" align="end">
+                <div className="p-3">
+                  <div className="space-y-2">
+                    <h4 className="font-medium text-sm">From Date</h4>
+                    <CalendarComponent
+                      mode="single"
+                      selected={dateFrom}
+                      onSelect={setDateFrom}
+                      initialFocus
+                    />
                   </div>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Filter by month</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+                  <div className="space-y-2 mt-4">
+                    <h4 className="font-medium text-sm">To Date</h4>
+                    <CalendarComponent
+                      mode="single"
+                      selected={dateTo}
+                      onSelect={setDateTo}
+                      initialFocus
+                    />
+                  </div>
+                  <div className="flex justify-between mt-4">
+                    <Button size="sm" variant="outline" onClick={clearDateFilter}>
+                      Clear
+                    </Button>
+                    <Button size="sm" onClick={() => {}}>
+                      Apply
+                    </Button>
+                  </div>
+                </div>
+              </PopoverContent>
+            </Popover>
           </div>
           
-          <div className="overflow-x-auto pb-2 -mx-4 px-4">
-            <div className="flex space-x-4 min-w-full" style={{scrollbarWidth: 'none'}}>
+          <ScrollArea className="w-full">
+            <div className="pb-2 flex space-x-4" style={{ minWidth: "100%", overflowX: "auto" }}>
               {filteredCompletedAssignments.map((assignment) => (
                 <div key={assignment.id} className="w-[270px] flex-shrink-0">
                   <AssignmentCard
@@ -157,11 +170,11 @@ export const AssignmentsTab = ({ classId, assignments }: AssignmentsTabProps) =>
               ))}
               {filteredCompletedAssignments.length === 0 && (
                 <Card className="w-full p-6 text-center text-muted-foreground">
-                  No assignments found for the selected month
+                  No assignments found for the selected date range
                 </Card>
               )}
             </div>
-          </div>
+          </ScrollArea>
         </div>
       )}
       
