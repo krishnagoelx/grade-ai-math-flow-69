@@ -2,28 +2,22 @@
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, Search, Users, FileText, BarChart } from "lucide-react";
+import { Plus, Search, Users, FileText } from "lucide-react";
 import { ClassCard } from "@/components/Dashboard/ClassCard";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Mock data for classes - ensuring consistency with class details
+  // Mock data for classes
   const classes = [
     {
       id: "class-1",
       name: "10 A",
-      studentCount: 12,
-      assignments: 10,
+      studentCount: 28,
+      assignments: 5,
       pending: 2,
     },
     {
@@ -67,19 +61,6 @@ const Dashboard = () => {
           <h1 className="text-2xl font-bold text-left">Dashboard</h1>
           <p className="text-muted-foreground text-left">Manage your classes</p>
         </div>
-        
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button variant="outline" size="icon" onClick={() => navigate("/analytics")}>
-                <BarChart size={18} />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Analytics Dashboard</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
       </div>
 
       {/* Search Bar */}

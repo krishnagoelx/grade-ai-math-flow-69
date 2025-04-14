@@ -11,61 +11,120 @@ const ClassDetail = () => {
   const { classId } = useParams<{ classId: string }>();
   const [activeTab, setActiveTab] = useState("assignments");
   
-  // Mock data - ensuring consistency with dashboard
-  const getClassData = (): ClassData => {
-    switch(classId) {
-      case "class-1":
-        return {
-          id: "class-1",
-          name: "10 A",
-          section: "",
-          studentCount: 12,
-          students: Array(12).fill(null).map((_, index) => ({ 
-            id: `ST${String(index + 1).padStart(3, '0')}`, 
-            name: getRandomName(), 
-            email: `student${index + 1}@example.com`, 
-            class: "10 A", 
-            roll: String(index + 1).padStart(2, '0'),
-            mobile: getRandomPhone()
-          })),
-          assignments: generateAssignments(10, 2) // 10 total, 2 active
-        };
-      case "class-3":
-        return {
-          id: "class-3",
-          name: "12 C",
-          section: "",
-          studentCount: 24,
-          students: Array(24).fill(null).map((_, index) => ({ 
-            id: `ST${String(index + 1).padStart(3, '0')}`, 
-            name: getRandomName(), 
-            email: `student${index + 1}@example.com`, 
-            class: "12 C", 
-            roll: String(index + 1).padStart(2, '0'),
-            mobile: getRandomPhone()
-          })),
-          assignments: generateAssignments(7, 0) // 7 total, 0 active
-        };
-      default:
-        return {
-          id: classId || "class-001",
-          name: "10 A",
-          section: "",
-          studentCount: 12,
-          students: Array(12).fill(null).map((_, index) => ({ 
-            id: `ST${String(index + 1).padStart(3, '0')}`, 
-            name: getRandomName(), 
-            email: `student${index + 1}@example.com`, 
-            class: "10 A", 
-            roll: String(index + 1).padStart(2, '0'),
-            mobile: getRandomPhone()
-          })),
-          assignments: generateAssignments(10, 2) // 10 total, 2 active
-        };
-    }
+  // Mock data for demonstration - in a real app this would be fetched based on classId
+  const classData: ClassData = {
+    id: classId || "class-001",
+    name: "10 A",
+    section: "",
+    studentCount: 32,
+    students: [
+      { id: "ST001", name: "John Doe", email: "john.doe@example.com", class: "10 A", roll: "01", mobile: "123-456-7890" },
+      { id: "ST002", name: "Jane Smith", email: "jane.smith@example.com", class: "10 A", roll: "02", mobile: "234-567-8901" },
+      { id: "ST003", name: "Robert Johnson", email: "robert.j@example.com", class: "10 A", roll: "03", mobile: "345-678-9012" },
+      { id: "ST004", name: "Emily Davis", email: "emily.d@example.com", class: "10 A", roll: "04", mobile: "456-789-0123" },
+      { id: "ST005", name: "Michael Brown", email: "michael.b@example.com", class: "10 A", roll: "05", mobile: "567-890-1234" },
+      { id: "ST006", name: "Sarah Wilson", email: "sarah.w@example.com", class: "10 A", roll: "06", mobile: "678-901-2345" },
+      { id: "ST007", name: "David Taylor", email: "david.t@example.com", class: "10 A", roll: "07", mobile: "789-012-3456" },
+      { id: "ST008", name: "Jessica Martin", email: "jessica.m@example.com", class: "10 A", roll: "08", mobile: "890-123-4567" },
+      { id: "ST009", name: "Thomas Clark", email: "thomas.c@example.com", class: "10 A", roll: "09", mobile: "901-234-5678" },
+      { id: "ST010", name: "Lisa Rodriguez", email: "lisa.r@example.com", class: "10 A", roll: "10", mobile: "012-345-6789" },
+      { id: "ST011", name: "Daniel Lewis", email: "daniel.l@example.com", class: "10 A", roll: "11", mobile: "987-654-3210" },
+      { id: "ST012", name: "Jennifer Lee", email: "jennifer.l@example.com", class: "10 A", roll: "12", mobile: "876-543-2109" },
+    ],
+    assignments: [
+      { 
+        id: "assign-001",
+        title: "Linear Equations Test", 
+        subject: "Algebra", 
+        date: "Apr 10, 2025", 
+        status: "completed" as const, 
+        completion: 100,
+        maxMarks: 50
+      },
+      { 
+        id: "assign-002",
+        title: "Probability Quiz", 
+        subject: "Statistics", 
+        date: "Apr 5, 2025", 
+        status: "active" as const, 
+        completion: 68,
+        maxMarks: 30 
+      },
+      { 
+        id: "assign-003",
+        title: "Geometry Problems", 
+        subject: "Geometry", 
+        date: "Mar 28, 2025", 
+        status: "draft" as const, 
+        completion: 0,
+        maxMarks: 25
+      },
+      { 
+        id: "assign-004",
+        title: "Calculus Basics", 
+        subject: "Calculus", 
+        date: "Mar 15, 2025", 
+        status: "completed" as const, 
+        completion: 100,
+        maxMarks: 40
+      },
+      { 
+        id: "assign-005",
+        title: "Statistics Mid-term", 
+        subject: "Statistics", 
+        date: "Feb 28, 2025", 
+        status: "completed" as const, 
+        completion: 100,
+        maxMarks: 75
+      },
+      { 
+        id: "assign-006",
+        title: "Trigonometry Quiz", 
+        subject: "Trigonometry", 
+        date: "Feb 15, 2025", 
+        status: "completed" as const, 
+        completion: 100,
+        maxMarks: 30
+      },
+      // Add more sample assignments 
+      { 
+        id: "assign-007",
+        title: "Calculus Derivatives", 
+        subject: "Calculus", 
+        date: "Apr 15, 2025", 
+        status: "active" as const, 
+        completion: 25,
+        maxMarks: 45
+      },
+      { 
+        id: "assign-008",
+        title: "Algebra Equations", 
+        subject: "Algebra", 
+        date: "Apr 20, 2025", 
+        status: "draft" as const, 
+        completion: 0,
+        maxMarks: 35
+      },
+      { 
+        id: "assign-009",
+        title: "Geometry Vectors", 
+        subject: "Geometry", 
+        date: "Jan 10, 2025", 
+        status: "completed" as const, 
+        completion: 100,
+        maxMarks: 40
+      },
+      { 
+        id: "assign-010",
+        title: "Statistics Probability", 
+        subject: "Statistics", 
+        date: "Jan 25, 2025", 
+        status: "completed" as const, 
+        completion: 100,
+        maxMarks: 50
+      }
+    ]
   };
-  
-  const classData = getClassData();
   
   return (
     <div className="space-y-6">
@@ -91,67 +150,5 @@ const ClassDetail = () => {
     </div>
   );
 };
-
-// Helper functions to generate consistent data
-function getRandomName() {
-  const firstNames = ["John", "Jane", "Michael", "Emily", "David", "Sarah", "Robert", "Lisa", "Thomas", "Jennifer", "James", "Emma"];
-  const lastNames = ["Smith", "Johnson", "Williams", "Brown", "Jones", "Miller", "Davis", "Garcia", "Rodriguez", "Wilson"];
-  return `${firstNames[Math.floor(Math.random() * firstNames.length)]} ${lastNames[Math.floor(Math.random() * lastNames.length)]}`;
-}
-
-function getRandomPhone() {
-  return `${Math.floor(100 + Math.random() * 900)}-${Math.floor(100 + Math.random() * 900)}-${Math.floor(1000 + Math.random() * 9000)}`;
-}
-
-function generateAssignments(total, active) {
-  const subjects = ["Algebra", "Geometry", "Statistics", "Calculus", "Trigonometry"];
-  const statuses = ["active", "completed"];
-  
-  // Generate active assignments first
-  const assignments = Array(active).fill(null).map((_, i) => ({
-    id: `assign-${String(i + 1).padStart(3, '0')}`,
-    title: `${subjects[i % subjects.length]} Assignment ${i + 1}`, 
-    subject: subjects[i % subjects.length], 
-    date: getRandomFutureDate(), 
-    status: "active" as "active" | "completed" | "draft", 
-    completion: Math.floor(Math.random() * 70) + 20, // 20-90%
-    maxMarks: (Math.floor(Math.random() * 5) + 2) * 10 // 20, 30, 40, 50, 60, 70
-  }));
-  
-  // Generate completed assignments to reach total
-  const completed = total - active;
-  for (let i = 0; i < completed; i++) {
-    assignments.push({
-      id: `assign-${String(i + active + 1).padStart(3, '0')}`,
-      title: `${subjects[i % subjects.length]} Assignment ${i + active + 1}`, 
-      subject: subjects[i % subjects.length], 
-      date: getRandomPastDate(), 
-      status: "completed" as "active" | "completed" | "draft", 
-      completion: 100,
-      maxMarks: (Math.floor(Math.random() * 5) + 2) * 10 // 20, 30, 40, 50, 60, 70
-    });
-  }
-  
-  return assignments;
-}
-
-function getRandomFutureDate() {
-  const today = new Date();
-  const futureDate = new Date(today);
-  futureDate.setDate(today.getDate() + Math.floor(Math.random() * 14) + 1); // 1-14 days in future
-  return formatDate(futureDate);
-}
-
-function getRandomPastDate() {
-  const today = new Date();
-  const pastDate = new Date(today);
-  pastDate.setDate(today.getDate() - Math.floor(Math.random() * 120) - 1); // 1-120 days in past
-  return formatDate(pastDate);
-}
-
-function formatDate(date) {
-  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-  return `${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
-}
 
 export default ClassDetail;
