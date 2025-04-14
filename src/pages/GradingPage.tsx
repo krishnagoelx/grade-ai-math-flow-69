@@ -14,13 +14,30 @@ import { UploadSubmissions } from "@/components/Grading/UploadSubmissions";
 import { GradingInterface } from "@/components/Grading/GradingInterface";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
+import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const GradingPage = () => {
   const [activeTab, setActiveTab] = useState("submissions");
   const [currentQuestion, setCurrentQuestion] = useState(1);
   const [gradingProgress, setGradingProgress] = useState(0);
   const [isGradingComplete, setIsGradingComplete] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const { toast } = useToast();
+  
+  // Mock available students for grading
+  const availableStudents = [
+    { id: "ST005", name: "Alex Brown" },
+    { id: "ST006", name: "Sarah Miller" },
+    { id: "ST007", name: "David Jones" },
+    { id: "ST008", name: "Emily Clark" },
+    { id: "ST009", name: "Michael Wilson" }
+  ];
+  
+  // Filter students based on search query
+  const filteredStudents = availableStudents.filter(student => 
+    student.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
   
   // Mock data for a sample student submission
   const mockStudentData = {
@@ -98,6 +115,17 @@ const GradingPage = () => {
     });
   };
   
+  const handleAssignStudent = (studentId: string, studentName: string) => {
+    toast({
+      title: "Student Assigned",
+      description: `${studentName} has been assigned to this assignment`
+    });
+  };
+  
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  };
+  
   return (
     <div className="container mx-auto px-4 space-y-4 pb-8 max-w-5xl">
       <h1 className="text-2xl font-bold tracking-tight">Midterm Exam</h1>
@@ -121,8 +149,8 @@ const GradingPage = () => {
         
         <TabsContent value="grading" className="py-4">
           <Card className="mb-4">
-            <CardContent className="p-4">
-              <div className="flex flex-col gap-2 sm:flex-row sm:justify-between sm:items-center">
+            <CardContent className="p-2">
+              <div className="flex flex-col gap-1 sm:flex-row sm:justify-between sm:items-center">
                 <div>
                   <div className="text-sm font-medium">
                     {isGradingComplete 
@@ -135,7 +163,7 @@ const GradingPage = () => {
                 </div>
                 
                 <div className="w-full sm:w-1/2">
-                  <Progress value={gradingProgress} className="h-1.5 mb-1" />
+                  <Progress value={gradingProgress} className="h-1 mb-1" />
                   <div className="flex justify-between text-xs text-muted-foreground">
                     <span>Q1</span>
                     <span>Q2</span>
@@ -146,7 +174,56 @@ const GradingPage = () => {
             </CardContent>
           </Card>
           
-          <GradingInterface {...mockStudentData} />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <div className="md:col-span-2">
+              <GradingInterface {...mockStudentData} />
+            </div>
+            
+            <div>
+              <Card className="h-full">
+                <CardHeader>
+                  <CardTitle>Assign Students</CardTitle>
+                  <CardDescription>
+                    Find and assign students to grade
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <Input 
+                    placeholder="Search students..." 
+                    value={searchQuery}
+                    onChange={handleSearchChange}
+                  />
+                  
+                  <ScrollArea className="h-[350px] overflow-x-auto">
+                    <div className="min-w-[200px] space-y-3">
+                      {filteredStudents.length > 0 ? (
+                        filteredStudents.map(student => (
+                          <div key={student.id} className="flex items-center justify-between p-3 border rounded-md">
+                            <div className="font-medium">{student.name}</div>
+                            <Button 
+                              size="sm" 
+                              variant="outline"
+                              onClick={() => handleAssignStudent(student.id, student.name)}
+                            >
+                              Assign
+                            </Button>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="text-center py-8">
+                          <p className="text-muted-foreground">No matching students</p>
+                        </div>
+                      )}
+                    </div>
+                  </ScrollArea>
+                  
+                  <Button className="w-full">
+                    Submit Assignments
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
           
           <div className="flex justify-between mt-4">
             <Button 

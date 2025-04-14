@@ -1,4 +1,6 @@
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { 
   Card, 
   CardContent,
@@ -18,7 +20,8 @@ import {
   CheckSquare,
   Square,
   GripVertical,
-  Upload
+  Upload,
+  ArrowLeft
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
@@ -51,8 +54,45 @@ const CreateAssignment = () => {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [selectedQuestionId, setSelectedQuestionId] = useState<string | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   
+  const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
+  
+  // Parse the URL to check if we're editing an existing assignment
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const editId = params.get('edit');
+    
+    if (editId) {
+      setEditingId(editId);
+      setIsEditing(true);
+      
+      // In a real app, we would fetch the assignment data here
+      // For now, we'll set some mock data
+      setTitle("Linear Equations Test");
+      setDueDate("2025-04-25");
+      setMaxMarks("50");
+      
+      // Mock questions for editing
+      setQuestions([
+        {
+          id: "q1",
+          questionText: "Solve the quadratic equation: 2x² + 5x - 3 = 0",
+          maxMarks: 10,
+          order: 1
+        },
+        {
+          id: "q2",
+          questionText: "Find the derivative of f(x) = x³ + 2x² - 5x + 7",
+          maxMarks: 8,
+          order: 2
+        }
+      ]);
+    }
+  }, [location]);
   
   const handleAddQuestionPaper = () => {
     setIsProcessing(true);
@@ -151,9 +191,16 @@ const CreateAssignment = () => {
     }
     
     toast({
-      title: "Assignment Created",
-      description: "The assignment has been saved successfully.",
+      title: isEditing ? "Assignment Updated" : "Assignment Created",
+      description: `The assignment has been ${isEditing ? 'updated' : 'saved'} successfully.`,
     });
+    
+    // Navigate back to the assignment detail or dashboard
+    if (isEditing && editingId) {
+      navigate(`/assignment/${editingId}`);
+    } else {
+      navigate('/dashboard');
+    }
   };
   
   const handleUploadQuestion = () => {
@@ -174,7 +221,16 @@ const CreateAssignment = () => {
   
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold tracking-tight">Create Assignment</h1>
+      <div className="flex items-center gap-4">
+        {isEditing && (
+          <Button variant="ghost" onClick={() => navigate(-1)} className="p-0 h-8 w-8">
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+        )}
+        <h1 className="text-2xl font-bold tracking-tight">
+          {isEditing ? "Edit Assignment" : "Create Assignment"}
+        </h1>
+      </div>
       
       <Card>
         <CardHeader>
@@ -413,7 +469,7 @@ const CreateAssignment = () => {
           onClick={handleSaveAssignment} 
           className="w-full bg-[#7359F8] hover:bg-[#5e47c9]"
         >
-          Save Assignment
+          {isEditing ? "Update Assignment" : "Save Assignment"}
         </Button>
       </div>
     </div>

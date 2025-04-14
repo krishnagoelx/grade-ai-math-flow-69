@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -6,7 +5,6 @@ import { ClassData } from "@/types/class";
 import { ClassSummary } from "@/components/Class/ClassSummary";
 import { AssignmentsTab } from "@/components/Class/AssignmentsTab";
 import { StudentsTab } from "@/components/Class/StudentsTab";
-import { ClassAnalytics } from "@/components/Class/ClassAnalytics";
 
 const ClassDetail = () => {
   const { classId } = useParams<{ classId: string }>();
@@ -78,7 +76,6 @@ const ClassDetail = () => {
         completion: 100,
         maxMarks: 30
       },
-      // Add more sample assignments 
       { 
         id: "assign-007",
         title: "Calculus Derivatives", 
@@ -124,7 +121,6 @@ const ClassDetail = () => {
             classId={classData.id} 
             assignments={classData.assignments} 
           />
-          <ClassAnalytics assignments={classData.assignments} />
         </TabsContent>
         
         <TabsContent value="students" className="mt-4">
