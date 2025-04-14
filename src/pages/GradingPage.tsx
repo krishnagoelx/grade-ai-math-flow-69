@@ -127,7 +127,7 @@ const GradingPage = () => {
                   <div className="text-sm font-medium">
                     {isGradingComplete 
                       ? "All questions graded" 
-                      : `Question ${currentQuestion} of ${totalStudents}`}
+                      : `Question ${currentQuestion} of ${totalQuestions}`}
                   </div>
                   <div className="text-xs text-muted-foreground">
                     Michael Brown • Student ID: ST005
@@ -170,7 +170,7 @@ const GradingPage = () => {
               </div>
             ) : (
               <Button onClick={handleNextQuestion}>
-                {currentQuestion < totalStudents ? "Next Question" : "Complete Grading"}
+                {currentQuestion < totalQuestions ? "Next Question" : "Complete Grading"}
               </Button>
             )}
           </div>
