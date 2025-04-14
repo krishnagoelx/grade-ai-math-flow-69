@@ -1,18 +1,12 @@
 
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { PlusCircle, Calendar, Filter } from "lucide-react";
+import { PlusCircle, Calendar } from "lucide-react";
 import { AssignmentCard } from "@/components/Dashboard/AssignmentCard";
 import { AssignmentSummary } from "@/types/class";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import {
   Select,
   SelectContent,
@@ -20,6 +14,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface AssignmentsTabProps {
   classId: string;
@@ -65,8 +65,8 @@ export const AssignmentsTab = ({ classId, assignments }: AssignmentsTabProps) =>
       {activeAssignments.length > 0 && (
         <div className="space-y-3">
           <h2 className="text-lg font-semibold tracking-tight">Active Assignments</h2>
-          <ScrollArea className="w-full pb-2 -mx-1 px-1">
-            <div className="flex space-x-4 pb-4">
+          <div className="overflow-x-auto pb-2 -mx-4 px-4">
+            <div className="flex space-x-4 min-w-full" style={{scrollbarWidth: 'none'}}>
               {activeAssignments.map((assignment) => (
                 <div key={assignment.id} className="w-[270px] flex-shrink-0">
                   <AssignmentCard
@@ -81,15 +81,15 @@ export const AssignmentsTab = ({ classId, assignments }: AssignmentsTabProps) =>
                 </div>
               ))}
             </div>
-          </ScrollArea>
+          </div>
         </div>
       )}
       
       {draftAssignments.length > 0 && (
         <div className="space-y-3">
           <h2 className="text-lg font-semibold tracking-tight">Drafts</h2>
-          <ScrollArea className="w-full pb-2 -mx-1 px-1">
-            <div className="flex space-x-4 pb-4">
+          <div className="overflow-x-auto pb-2 -mx-4 px-4">
+            <div className="flex space-x-4 min-w-full" style={{scrollbarWidth: 'none'}}>
               {draftAssignments.map((assignment) => (
                 <div key={assignment.id} className="w-[270px] flex-shrink-0">
                   <AssignmentCard
@@ -104,7 +104,7 @@ export const AssignmentsTab = ({ classId, assignments }: AssignmentsTabProps) =>
                 </div>
               ))}
             </div>
-          </ScrollArea>
+          </div>
         </div>
       )}
       
@@ -112,25 +112,36 @@ export const AssignmentsTab = ({ classId, assignments }: AssignmentsTabProps) =>
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold tracking-tight">Completed</h2>
-            <Select
-              value={selectedMonth}
-              onValueChange={setSelectedMonth}
-            >
-              <SelectTrigger className="w-[140px] h-8 text-sm">
-                <Calendar className="h-4 w-4 mr-2" />
-                <SelectValue placeholder="Select Month" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Months</SelectItem>
-                {months.map((month) => (
-                  <SelectItem key={month} value={month}>{month}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div>
+                    <Select
+                      value={selectedMonth}
+                      onValueChange={setSelectedMonth}
+                    >
+                      <SelectTrigger className="w-[140px] h-8 text-sm">
+                        <Calendar className="h-4 w-4 mr-2" />
+                        <SelectValue placeholder="Select Month" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Months</SelectItem>
+                        {months.map((month) => (
+                          <SelectItem key={month} value={month}>{month}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Filter by month</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
           
-          <ScrollArea className="w-full pb-2 -mx-1 px-1">
-            <div className="flex space-x-4 pb-4">
+          <div className="overflow-x-auto pb-2 -mx-4 px-4">
+            <div className="flex space-x-4 min-w-full" style={{scrollbarWidth: 'none'}}>
               {filteredCompletedAssignments.map((assignment) => (
                 <div key={assignment.id} className="w-[270px] flex-shrink-0">
                   <AssignmentCard
@@ -150,7 +161,7 @@ export const AssignmentsTab = ({ classId, assignments }: AssignmentsTabProps) =>
                 </Card>
               )}
             </div>
-          </ScrollArea>
+          </div>
         </div>
       )}
       

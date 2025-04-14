@@ -2,10 +2,8 @@
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, Search, Users, FileText, BarChart2 } from "lucide-react";
+import { Plus, Search, Users, FileText } from "lucide-react";
 import { ClassCard } from "@/components/Dashboard/ClassCard";
-import { AssignmentCard } from "@/components/Dashboard/AssignmentCard";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 
@@ -35,28 +33,20 @@ const Dashboard = () => {
       studentCount: 24,
       assignments: 7,
       pending: 0,
-    }
-  ];
-
-  // Mock data for recent assignments
-  const recentAssignments = [
-    {
-      id: "assignment-1",
-      title: "Linear Equations Quiz",
-      subject: "Algebra",
-      date: "10 April 2025",
-      status: "active" as "draft" | "active" | "completed",
-      completion: 70,
-      maxMarks: 50,
     },
     {
-      id: "assignment-2",
-      title: "Trigonometry Mid-term",
-      subject: "Trigonometry",
-      date: "5 April 2025",
-      status: "completed" as "draft" | "active" | "completed",
-      completion: 100,
-      maxMarks: 100,
+      id: "class-4",
+      name: "9 D",
+      studentCount: 30,
+      assignments: 4,
+      pending: 3,
+    },
+    {
+      id: "class-5",
+      name: "8 E",
+      studentCount: 35,
+      assignments: 6,
+      pending: 2,
     }
   ];
 
@@ -71,12 +61,6 @@ const Dashboard = () => {
           <h1 className="text-2xl font-bold text-left">Dashboard</h1>
           <p className="text-muted-foreground text-left">Manage your classes</p>
         </div>
-        <Button 
-          className="rounded-full h-10 w-10 p-0 bg-[#7359F8] hover:bg-[#5e47c9]" 
-          onClick={() => navigate("/analytics")}
-        >
-          <BarChart2 size={18} />
-        </Button>
       </div>
 
       {/* Search Bar */}
@@ -119,28 +103,6 @@ const Dashboard = () => {
           ))}
         </div>
       </section>
-
-      {/* Recent Assignments Section */}
-      {recentAssignments.length > 0 && (
-        <section>
-          <h2 className="text-lg font-semibold mb-3 text-left">Recent Assignments</h2>
-          
-          <div className="grid grid-cols-1 gap-4">
-            {recentAssignments.map((assignment) => (
-              <AssignmentCard
-                key={assignment.id}
-                id={assignment.id}
-                title={assignment.title}
-                subject={assignment.subject}
-                date={assignment.date}
-                status={assignment.status}
-                completion={assignment.completion}
-                maxMarks={assignment.maxMarks}
-              />
-            ))}
-          </div>
-        </section>
-      )}
     </div>
   );
 };

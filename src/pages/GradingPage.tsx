@@ -9,11 +9,10 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, Save, Send } from "lucide-react";
+import { Save, Send } from "lucide-react";
 import { UploadSubmissions } from "@/components/Grading/UploadSubmissions";
 import { GradingInterface } from "@/components/Grading/GradingInterface";
 import { Progress } from "@/components/ui/progress";
-import { Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 
 const GradingPage = () => {
@@ -101,20 +100,8 @@ const GradingPage = () => {
   
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div className="flex items-center">
-          <Button variant="ghost" asChild className="mr-2">
-            <Link to="/dashboard">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back
-            </Link>
-          </Button>
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Grading: Midterm Exam</h1>
-            <p className="text-muted-foreground">Mathematics • Grade 10A</p>
-          </div>
-        </div>
-      </div>
+      <h1 className="text-2xl font-bold tracking-tight">Midterm Exam</h1>
+      <p className="text-muted-foreground">Mathematics • Grade 10A</p>
       
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="grid w-full grid-cols-2">

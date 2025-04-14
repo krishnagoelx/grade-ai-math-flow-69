@@ -1,11 +1,11 @@
 
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ArrowLeft, Upload, File } from "lucide-react";
+import { Upload, File } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const CreateClass = () => {
@@ -64,14 +64,7 @@ const CreateClass = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center">
-        <Button variant="ghost" asChild className="p-0 h-auto mr-3">
-          <Link to="/dashboard">
-            <ArrowLeft className="h-5 w-5" />
-          </Link>
-        </Button>
-        <h1 className="text-2xl font-bold tracking-tight">Create New Class</h1>
-      </div>
+      <h1 className="text-2xl font-bold tracking-tight">Create New Class</h1>
       
       <Card>
         <form onSubmit={handleSubmit}>
