@@ -92,41 +92,40 @@ export const StudentsTab = ({ students }: StudentsTabProps) => {
         </div>
         
         <div className="flex gap-2">
-          {!isMobile && (
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button variant="outline" size="icon" onClick={handleImportStudents}>
-                    <Upload size={16} />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Import Students</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          )}
-          
-          {!isMobile && (
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button variant="outline" size="icon" onClick={handleExportStudents}>
-                    <Download size={16} />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Export Students</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          )}
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="outline" size={isMobile ? "sm" : "icon"} onClick={handleImportStudents}>
+                  <Upload size={16} />
+                  {isMobile && <span className="ml-2">Import</span>}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Import Students</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
           
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button variant="outline" size="icon" onClick={handleAddStudent}>
+                <Button variant="outline" size={isMobile ? "sm" : "icon"} onClick={handleExportStudents}>
+                  <Download size={16} />
+                  {isMobile && <span className="ml-2">Export</span>}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Export Students</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="outline" size={isMobile ? "sm" : "icon"} onClick={handleAddStudent}>
                   <PlusCircle size={16} />
+                  {isMobile && <span className="ml-2">Add</span>}
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
@@ -140,7 +139,7 @@ export const StudentsTab = ({ students }: StudentsTabProps) => {
       <div className="border rounded-md bg-white overflow-hidden">
         <div className="overflow-x-auto">
           <div className="sticky top-0 z-10 bg-muted/50 border-b">
-            <div className="min-w-[600px]">
+            <div className={isMobile ? "min-w-[500px]" : "min-w-[600px]"}>
               <div className="grid grid-cols-5 h-10">
                 <div className="px-4 flex items-center font-medium text-muted-foreground">Name</div>
                 <div className="px-4 flex items-center font-medium text-muted-foreground">Class</div>
@@ -152,7 +151,7 @@ export const StudentsTab = ({ students }: StudentsTabProps) => {
           </div>
           
           <ScrollArea className="h-[400px]">
-            <div className="min-w-[600px]">
+            <div className={isMobile ? "min-w-[500px]" : "min-w-[600px]"}>
               {filteredStudents.map((student) => (
                 <div 
                   key={student.id} 
