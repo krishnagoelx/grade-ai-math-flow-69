@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { 
   Card, 
@@ -18,7 +17,8 @@ import {
   Edit,
   CheckSquare,
   Square,
-  GripVertical
+  GripVertical,
+  Upload
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
@@ -55,7 +55,6 @@ const CreateAssignment = () => {
   const { toast } = useToast();
   
   const handleAddQuestionPaper = () => {
-    // Simulate auto-splitting questions
     setIsProcessing(true);
     
     setTimeout(() => {
@@ -124,7 +123,6 @@ const CreateAssignment = () => {
       description: "AI is generating a rubric for this question...",
     });
     
-    // In a real app, this would call the API to generate the rubric
     setTimeout(() => {
       toast({
         title: "Rubric Generated",
@@ -152,11 +150,26 @@ const CreateAssignment = () => {
       return;
     }
     
-    // In a real app, this would save to the backend
     toast({
       title: "Assignment Created",
       description: "The assignment has been saved successfully.",
     });
+  };
+  
+  const handleUploadQuestion = () => {
+    toast({
+      title: "Upload Question",
+      description: "Question uploaded successfully."
+    });
+    
+    const newQuestion: Question = {
+      id: `q${Date.now()}`,
+      questionText: "Uploaded question",
+      maxMarks: 8,
+      order: questions.length + 1
+    };
+    
+    setQuestions([...questions, newQuestion]);
   };
   
   return (
@@ -222,13 +235,17 @@ const CreateAssignment = () => {
                     </p>
                   </div>
                   
-                  <div className="flex justify-center gap-3">
+                  <div className="flex flex-wrap justify-center gap-3">
                     <Button onClick={handleAddQuestionPaper}>
                       Upload Question Paper
                     </Button>
                     <Button variant="outline" onClick={handleAddQuestion}>
                       <PlusCircle size={16} className="mr-2" />
                       Add Question
+                    </Button>
+                    <Button variant="outline" onClick={handleUploadQuestion}>
+                      <Upload size={16} className="mr-2" />
+                      Upload Question
                     </Button>
                   </div>
                 </div>
@@ -250,10 +267,16 @@ const CreateAssignment = () => {
             <>
               <div className="flex justify-between items-center">
                 <h3 className="text-lg font-medium">Questions</h3>
-                <Button variant="outline" size="sm" onClick={handleAddQuestion}>
-                  <PlusCircle size={16} className="mr-2" />
-                  Add Question
-                </Button>
+                <div className="flex gap-2">
+                  <Button variant="outline" size="sm" onClick={handleAddQuestion}>
+                    <PlusCircle size={16} className="mr-2" />
+                    Add Question
+                  </Button>
+                  <Button variant="outline" size="sm" onClick={handleUploadQuestion}>
+                    <Upload size={16} className="mr-2" />
+                    Upload Question
+                  </Button>
+                </div>
               </div>
               
               <div className="space-y-3">

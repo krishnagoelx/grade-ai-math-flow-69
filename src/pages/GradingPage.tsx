@@ -99,9 +99,9 @@ const GradingPage = () => {
   };
   
   return (
-    <div className="space-y-6">
+    <div className="container mx-auto px-4 space-y-4 pb-8 max-w-5xl">
       <h1 className="text-2xl font-bold tracking-tight">Midterm Exam</h1>
-      <p className="text-muted-foreground">Mathematics • Grade 10A</p>
+      <p className="text-muted-foreground">Grade 10A</p>
       
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="grid w-full grid-cols-2">
@@ -109,48 +109,46 @@ const GradingPage = () => {
           <TabsTrigger value="grading">Grading</TabsTrigger>
         </TabsList>
         
-        <TabsContent value="submissions" className="py-6">
+        <TabsContent value="submissions" className="py-4">
           <UploadSubmissions />
           
-          <div className="flex justify-end mt-6">
+          <div className="flex justify-end mt-4">
             <Button onClick={() => setActiveTab("grading")}>
               Start Grading
             </Button>
           </div>
         </TabsContent>
         
-        <TabsContent value="grading" className="py-6">
-          <Card className="mb-6">
-            <CardHeader className="pb-3">
-              <div className="flex justify-between items-start">
+        <TabsContent value="grading" className="py-4">
+          <Card className="mb-4">
+            <CardContent className="p-4">
+              <div className="flex flex-col gap-2 sm:flex-row sm:justify-between sm:items-center">
                 <div>
-                  <CardTitle>Grading Progress</CardTitle>
-                  <CardDescription>
+                  <div className="text-sm font-medium">
                     {isGradingComplete 
-                      ? "All questions have been graded" 
-                      : `Question ${currentQuestion} of ${totalQuestions}`}
-                  </CardDescription>
+                      ? "All questions graded" 
+                      : `Question ${currentQuestion} of ${totalStudents}`}
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    Michael Brown • Student ID: ST005
+                  </div>
                 </div>
-                <div className="text-right">
-                  <p className="text-sm font-medium">Michael Brown</p>
-                  <p className="text-xs text-muted-foreground">Student ID: ST005</p>
+                
+                <div className="w-full sm:w-1/2">
+                  <Progress value={gradingProgress} className="h-1.5 mb-1" />
+                  <div className="flex justify-between text-xs text-muted-foreground">
+                    <span>Q1</span>
+                    <span>Q2</span>
+                    <span>Q3</span>
+                  </div>
                 </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <Progress value={gradingProgress} className="h-2 mb-2" />
-              
-              <div className="flex justify-between text-xs text-muted-foreground">
-                <span>Question 1</span>
-                <span>Question 2</span>
-                <span>Question 3</span>
               </div>
             </CardContent>
           </Card>
           
           <GradingInterface {...mockStudentData} />
           
-          <div className="flex justify-between mt-6">
+          <div className="flex justify-between mt-4">
             <Button 
               variant="outline" 
               onClick={handlePreviousQuestion}
@@ -172,7 +170,7 @@ const GradingPage = () => {
               </div>
             ) : (
               <Button onClick={handleNextQuestion}>
-                {currentQuestion < totalQuestions ? "Next Question" : "Complete Grading"}
+                {currentQuestion < totalStudents ? "Next Question" : "Complete Grading"}
               </Button>
             )}
           </div>

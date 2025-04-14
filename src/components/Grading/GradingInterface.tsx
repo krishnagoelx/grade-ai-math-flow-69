@@ -109,9 +109,9 @@ export const GradingInterface = ({
   };
   
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
       <div>
-        <Card className="mb-6">
+        <Card className="mb-4">
           <CardHeader className="pb-2">
             <div className="flex justify-between items-center">
               <CardTitle className="text-lg">Student Submission</CardTitle>
@@ -128,7 +128,7 @@ export const GradingInterface = ({
             
             <div className="border rounded-md overflow-hidden">
               {/* This would be the actual scanned assignment in a real app */}
-              <div className="bg-slate-100 h-[400px] flex items-center justify-center">
+              <div className="bg-slate-100 h-[300px] sm:h-[400px] flex items-center justify-center">
                 <div className="text-center">
                   <FileText size={48} className="mx-auto mb-2 text-slate-400" />
                   <p className="text-sm text-slate-500">
@@ -169,15 +169,15 @@ export const GradingInterface = ({
               </TabsList>
               
               <TabsContent value="criteria" className="space-y-4">
-                <ScrollArea className="h-[450px] pr-4">
+                <ScrollArea className="h-[350px] sm:h-[450px] pr-4">
                   {criteria.map((crit) => (
                     <div key={crit.id} className="border rounded-md p-3 mb-3">
                       <div className="flex justify-between items-start mb-2">
-                        <div>
+                        <div className="pr-2">
                           <h4 className="font-medium">{crit.title}</h4>
                           <p className="text-xs text-muted-foreground">{crit.description}</p>
                         </div>
-                        <div className="flex items-center">
+                        <div className="flex items-center shrink-0">
                           <Input
                             type="number"
                             value={crit.points}
@@ -232,7 +232,7 @@ export const GradingInterface = ({
               </TabsContent>
             </Tabs>
             
-            <Separator className="my-6" />
+            <Separator className="my-4" />
             
             <div className="space-y-4">
               <div className="flex justify-between items-center">

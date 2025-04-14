@@ -1,26 +1,64 @@
 
 import { useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Upload, Share2, BarChart, FileText, FileUp, Download, Settings, Eye } from "lucide-react";
+import { 
+  Upload, 
+  Share2, 
+  BarChart, 
+  FileText, 
+  FileUp, 
+  Download, 
+  Settings, 
+  Eye, 
+  Edit, 
+  CheckCircle, 
+  Loader2, 
+  RotateCcw
+} from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { AssignmentDetail, StudentAssignment } from "@/types/class";
+import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { 
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Checkbox
+} from "@/components/ui/checkbox";
 
 const AssignmentDetailPage = () => {
   const { assignmentId } = useParams<{ assignmentId: string }>();
+  const navigate = useNavigate();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("results");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedStudents, setSelectedStudents] = useState<string[]>([]);
   
   // Mock assignment data
   const assignment: AssignmentDetail = {
     id: assignmentId || "assign-001",
     title: "Linear Equations Test",
-    subject: "Algebra",
+    subject: "",
     date: "Apr 10, 2023",
     status: "active",
     completion: 68,
@@ -62,13 +100,13 @@ const AssignmentDetailPage = () => {
       }
     ]
   };
-  
-  const statusConfig = {
-    "pending": { label: "Pending", color: "bg-gray-100 text-gray-800" },
-    "processing": { label: "Processing", color: "bg-blue-100 text-blue-800" },
-    "graded": { label: "Graded", color: "bg-green-100 text-green-800" },
-    "failed": { label: "Failed", color: "bg-red-100 text-red-800" }
-  };
+
+  // Mock available students for grading
+  const availableStudents = [
+    { id: "ST005", name: "Alex Brown" },
+    { id: "ST006", name: "Sarah Miller" },
+    { id: "ST007", name: "David Jones" }
+  ];
   
   const handleUploadSheets = () => {
     toast({
@@ -78,10 +116,24 @@ const AssignmentDetailPage = () => {
   };
   
   const handleShareResults = () => {
+    if (selectedStudents.length === 0) {
+      toast({
+        title: "No Students Selected",
+        description: "Please select students to share results with",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     toast({
-      title: "Share Results",
-      description: "This would share results with all graded students"
+      title: "Results Shared",
+      description: `Results shared with ${selectedStudents.length} student(s)`
     });
+    setSelectedStudents([]);
+  };
+  
+  const handleEditAssignment = () => {
+    navigate(`/assignment/${assignmentId}/edit`);
   };
   
   const handleRetryGrading = (studentId: string) => {
@@ -99,11 +151,39 @@ const AssignmentDetailPage = () => {
   };
   
   const handleViewFeedback = (studentId: string) => {
+    navigate(`/student/${studentId}/feedback`);
+  };
+  
+  const handleSearchStudent = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  };
+  
+  const handleAssignStudent = (studentId: string, studentName: string) => {
     toast({
-      title: "View Feedback",
-      description: `Viewing feedback for student ${studentId}`
+      title: "Student Assigned",
+      description: `${studentName} has been assigned to this assignment`
     });
   };
+  
+  const toggleStudentSelection = (studentId: string) => {
+    if (selectedStudents.includes(studentId)) {
+      setSelectedStudents(selectedStudents.filter(id => id !== studentId));
+    } else {
+      setSelectedStudents([...selectedStudents, studentId]);
+    }
+  };
+  
+  const selectAllStudents = () => {
+    if (selectedStudents.length === assignment.students.length) {
+      setSelectedStudents([]);
+    } else {
+      setSelectedStudents(assignment.students.map(s => s.studentId));
+    }
+  };
+  
+  const filteredStudents = availableStudents.filter(s => 
+    s.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
   
   const pendingCount = assignment.students.filter(s => s.status === "pending").length;
   const processingCount = assignment.students.filter(s => s.status === "processing").length;
@@ -114,265 +194,192 @@ const AssignmentDetailPage = () => {
   const gradedPercentage = totalStudents > 0 ? (gradedCount / totalStudents) * 100 : 0;
   
   return (
-    <div className="space-y-8">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <Button variant="ghost" asChild className="p-0 h-auto">
-            <Link to={`/class/${assignment.id.split('-')[0]}`}>
-              <ArrowLeft className="h-5 w-5" />
-            </Link>
-          </Button>
-          <div>
-            <div className="flex items-center gap-3">
-              <h1 className="text-3xl font-bold tracking-tight">{assignment.title}</h1>
-              <Badge 
-                variant="outline" 
-                className={
-                  assignment.status === "draft" ? "bg-gray-100 text-gray-800" :
-                  assignment.status === "active" ? "bg-blue-100 text-blue-800" :
-                  "bg-green-100 text-green-800"
-                }
-              >
-                {assignment.status === "draft" ? "Draft" : 
-                 assignment.status === "active" ? "Active" : "Completed"}
-              </Badge>
-            </div>
-            <p className="text-muted-foreground">{assignment.subject} • {assignment.maxMarks} marks</p>
+    <div className="container mx-auto px-4 space-y-6 pb-8 max-w-5xl">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">{assignment.title}</h1>
+          
+          <div className="flex items-center flex-wrap gap-2 mt-1">
+            <Badge 
+              variant="outline" 
+              className={
+                assignment.status === "draft" ? "bg-gray-100 text-gray-800" :
+                assignment.status === "active" ? "bg-blue-100 text-blue-800" :
+                "bg-green-100 text-green-800"
+              }
+            >
+              {assignment.status === "draft" ? "Draft" : 
+               assignment.status === "active" ? "Active" : "Completed"}
+            </Badge>
+            <p className="text-sm text-muted-foreground">{assignment.maxMarks} marks</p>
           </div>
         </div>
         
-        <div className="flex gap-3">
-          {(assignment.status === "active" || assignment.status === "completed") && (
-            <>
-              <Button variant="outline" onClick={handleShareResults}>
-                <Share2 className="mr-2 h-4 w-4" />
-                Share Results
-              </Button>
-              <Button variant="outline" asChild>
-                <Link to={`/assignment/${assignmentId}/analytics`}>
-                  <BarChart className="mr-2 h-4 w-4" />
-                  Analytics
-                </Link>
-              </Button>
-            </>
-          )}
+        <div className="flex flex-wrap gap-2">
+          <Button variant="outline" onClick={handleEditAssignment}>
+            <Edit className="mr-2 h-4 w-4" />
+            Edit
+          </Button>
+          <Button variant="outline" onClick={handleShareResults}>
+            <Share2 className="mr-2 h-4 w-4" />
+            Share
+          </Button>
+          <Button variant="outline" asChild>
+            <Link to={`/assignment/${assignmentId}/analytics`}>
+              <BarChart className="mr-2 h-4 w-4" />
+              Analytics
+            </Link>
+          </Button>
           <Button onClick={handleUploadSheets}>
             <Upload className="mr-2 h-4 w-4" />
-            Upload Sheets
+            Upload
           </Button>
         </div>
       </div>
       
       {assignment.status === "active" && (
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle>Grading Progress</CardTitle>
-            <CardDescription>
-              {gradedCount} of {totalStudents} sheets graded
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Progress value={gradedPercentage} className="h-2 mb-4" />
-            
-            <div className="grid grid-cols-4 gap-4 text-center">
-              <div className="space-y-1">
-                <div className="text-2xl font-bold">{pendingCount}</div>
-                <div className="text-xs text-muted-foreground">Pending</div>
+        <Card className="mb-2">
+          <CardContent className="p-4">
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <span className="text-sm">
+                  {gradedCount} of {totalStudents} graded
+                </span>
+                <span className="text-sm font-medium">{Math.round(gradedPercentage)}%</span>
               </div>
-              <div className="space-y-1">
-                <div className="text-2xl font-bold">{processingCount}</div>
-                <div className="text-xs text-muted-foreground">Processing</div>
-              </div>
-              <div className="space-y-1">
-                <div className="text-2xl font-bold">{gradedCount}</div>
-                <div className="text-xs text-muted-foreground">Graded</div>
-              </div>
-              <div className="space-y-1">
-                <div className="text-2xl font-bold">{failedCount}</div>
-                <div className="text-xs text-muted-foreground">Failed</div>
-              </div>
+              <Progress value={gradedPercentage} className="h-1.5" />
             </div>
           </CardContent>
         </Card>
       )}
       
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="results">Results</TabsTrigger>
-          <TabsTrigger value="setup">Setup</TabsTrigger>
           <TabsTrigger value="grade">Grade</TabsTrigger>
         </TabsList>
         
-        <TabsContent value="results" className="space-y-6">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Student</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Score</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {assignment.students.map((student) => (
-                <TableRow key={student.studentId}>
-                  <TableCell className="font-medium">{student.studentName}</TableCell>
-                  <TableCell>
-                    <Badge variant="outline" className={statusConfig[student.status].color}>
-                      {statusConfig[student.status].label}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>{student.score !== undefined ? `${student.score}/${assignment.maxMarks}` : '-'}</TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
-                      {student.status === "failed" && (
-                        <Button size="sm" variant="outline" onClick={() => handleRetryGrading(student.studentId)}>
-                          Retry
-                        </Button>
-                      )}
-                      
-                      {student.status === "graded" && (
-                        <>
-                          <Button size="sm" variant="outline" onClick={() => handleViewFeedback(student.studentId)}>
-                            View
-                          </Button>
-                          <Button 
-                            size="sm" 
-                            variant={student.isShared ? "outline" : "default"}
-                            onClick={() => handleShareWithStudent(student.studentId)}
-                          >
-                            {student.isShared ? "Shared" : "Share"}
-                          </Button>
-                        </>
-                      )}
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TabsContent>
-        
-        <TabsContent value="setup" className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">Question Paper</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-col items-center justify-center p-6 border border-dashed rounded-lg">
-                  {assignment.questionPaper ? (
-                    <div className="text-center">
-                      <FileText size={40} className="mx-auto mb-2 text-primary" />
-                      <p className="text-sm font-medium mb-4">Question Paper Uploaded</p>
-                      <div className="flex gap-2">
-                        <Button size="sm" variant="outline">
-                          <Eye size={14} className="mr-1" />
-                          View
-                        </Button>
-                        <Button size="sm" variant="outline">
-                          <Download size={14} className="mr-1" />
-                          Download
-                        </Button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="text-center">
-                      <FileUp size={40} className="mx-auto mb-2 text-muted-foreground" />
-                      <p className="text-sm text-muted-foreground mb-4">Upload question paper</p>
-                      <Button size="sm">Upload</Button>
-                    </div>
-                  )}
+        <TabsContent value="results" className="space-y-4">
+          <Card>
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <CardTitle>Student Results</CardTitle>
+                <div className="flex gap-2">
+                  <Checkbox 
+                    id="select-all" 
+                    checked={selectedStudents.length === assignment.students.length && assignment.students.length > 0}
+                    onCheckedChange={selectAllStudents}
+                  />
+                  <label htmlFor="select-all" className="text-sm">Select All</label>
                 </div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">Marking Scheme</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-col items-center justify-center p-6 border border-dashed rounded-lg">
-                  {assignment.markingScheme ? (
-                    <div className="text-center">
-                      <FileText size={40} className="mx-auto mb-2 text-primary" />
-                      <p className="text-sm font-medium mb-4">Marking Scheme Uploaded</p>
-                      <div className="flex gap-2">
-                        <Button size="sm" variant="outline">
-                          <Eye size={14} className="mr-1" />
-                          View
-                        </Button>
-                        <Button size="sm" variant="outline">
-                          <Download size={14} className="mr-1" />
-                          Download
-                        </Button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="text-center">
-                      <FileUp size={40} className="mx-auto mb-2 text-muted-foreground" />
-                      <p className="text-sm text-muted-foreground mb-4">Upload marking scheme</p>
-                      <Button size="sm">Upload</Button>
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">Rubric</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-col items-center justify-center p-6 border border-dashed rounded-lg">
-                  {assignment.rubric ? (
-                    <div className="text-center">
-                      <FileText size={40} className="mx-auto mb-2 text-primary" />
-                      <p className="text-sm font-medium mb-4">Rubric Uploaded</p>
-                      <div className="flex gap-2">
-                        <Button size="sm" variant="outline">
-                          <Eye size={14} className="mr-1" />
-                          View
-                        </Button>
-                        <Button size="sm" variant="outline">
-                          <Settings size={14} className="mr-1" />
-                          Edit
-                        </Button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="text-center">
-                      <div className="space-y-2">
-                        <Button size="sm" variant="outline" className="w-full">
-                          <Upload size={14} className="mr-1" />
-                          Upload Rubric
-                        </Button>
-                        <Button size="sm" className="w-full">
-                          <Settings size={14} className="mr-1" />
-                          Generate Rubric
-                        </Button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <ScrollArea className="h-[400px] pr-4">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-10">
+                        <span className="sr-only">Select</span>
+                      </TableHead>
+                      <TableHead>Student</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Score</TableHead>
+                      <TableHead className="text-right">Feedback</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {assignment.students.map((student) => (
+                      <TableRow key={student.studentId}>
+                        <TableCell>
+                          <Checkbox 
+                            checked={selectedStudents.includes(student.studentId)} 
+                            onCheckedChange={() => toggleStudentSelection(student.studentId)}
+                          />
+                        </TableCell>
+                        <TableCell className="font-medium">{student.studentName}</TableCell>
+                        <TableCell>
+                          {student.status === "graded" && (
+                            <CheckCircle size={18} className="text-green-500" />
+                          )}
+                          {student.status === "processing" && (
+                            <Loader2 size={18} className="text-blue-500 animate-spin" />
+                          )}
+                          {student.status === "failed" && (
+                            <Button variant="ghost" size="sm" onClick={() => handleRetryGrading(student.studentId)}>
+                              <RotateCcw size={16} className="text-red-500 mr-1" />
+                              <span className="sr-only sm:not-sr-only sm:text-xs">Retry</span>
+                            </Button>
+                          )}
+                          {student.status === "pending" && (
+                            <span className="text-gray-500 text-sm">Pending</span>
+                          )}
+                        </TableCell>
+                        <TableCell>{student.score !== undefined ? `${student.score}/${assignment.maxMarks}` : '-'}</TableCell>
+                        <TableCell className="text-right">
+                          {student.status === "graded" && (
+                            <Button variant="ghost" size="sm" onClick={() => handleViewFeedback(student.studentId)}>
+                              <Eye size={16} className="mr-1" />
+                              <span className="sr-only sm:not-sr-only sm:text-xs">View</span>
+                            </Button>
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </ScrollArea>
+            </CardContent>
+          </Card>
         </TabsContent>
         
         <TabsContent value="grade" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Upload Student Sheets</CardTitle>
+              <CardTitle>Grade Student Submissions</CardTitle>
               <CardDescription>
-                Upload student answer sheets to be automatically graded
+                Upload student submissions or assign to available students
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <div className="flex flex-col items-center justify-center p-12 border border-dashed rounded-lg">
-                <FileUp size={60} className="text-muted-foreground mb-4" />
+            <CardContent className="space-y-4">
+              <div>
+                <Input 
+                  placeholder="Search students..." 
+                  value={searchQuery}
+                  onChange={handleSearchStudent}
+                  className="mb-4"
+                />
+                
+                <ScrollArea className="h-[300px]">
+                  <div className="space-y-3">
+                    {filteredStudents.length > 0 ? (
+                      filteredStudents.map(student => (
+                        <div key={student.id} className="flex items-center justify-between p-3 border rounded-md">
+                          <div className="font-medium">{student.name}</div>
+                          <div className="flex gap-2">
+                            <Button 
+                              size="sm" 
+                              variant="outline"
+                              onClick={() => handleAssignStudent(student.id, student.name)}
+                            >
+                              Assign
+                            </Button>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="text-center py-8">
+                        <p className="text-muted-foreground">No matching students found</p>
+                      </div>
+                    )}
+                  </div>
+                </ScrollArea>
+              </div>
+              
+              <div className="flex flex-col items-center justify-center p-6 border border-dashed rounded-lg">
+                <FileUp size={40} className="text-muted-foreground mb-4" />
                 <p className="text-sm text-center text-muted-foreground mb-6 max-w-md">
-                  Drag and drop student answer sheets here, or click to browse. You can upload multiple files at once.
+                  Upload student answer sheets to be automatically graded
                 </p>
                 <Button onClick={handleUploadSheets}>
                   <Upload className="mr-2 h-4 w-4" />
