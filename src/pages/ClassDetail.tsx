@@ -113,7 +113,7 @@ function generateAssignments(total, active) {
     title: `${subjects[i % subjects.length]} Assignment ${i + 1}`, 
     subject: subjects[i % subjects.length], 
     date: getRandomFutureDate(), 
-    status: "active" as const, 
+    status: "active" as "active" | "completed" | "draft", 
     completion: Math.floor(Math.random() * 70) + 20, // 20-90%
     maxMarks: (Math.floor(Math.random() * 5) + 2) * 10 // 20, 30, 40, 50, 60, 70
   }));
@@ -126,7 +126,7 @@ function generateAssignments(total, active) {
       title: `${subjects[i % subjects.length]} Assignment ${i + active + 1}`, 
       subject: subjects[i % subjects.length], 
       date: getRandomPastDate(), 
-      status: "completed" as const, 
+      status: "completed" as "active" | "completed" | "draft", 
       completion: 100,
       maxMarks: (Math.floor(Math.random() * 5) + 2) * 10 // 20, 30, 40, 50, 60, 70
     });
