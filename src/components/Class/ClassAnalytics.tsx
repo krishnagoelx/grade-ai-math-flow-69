@@ -40,16 +40,15 @@ export const ClassAnalytics = ({ assignments }: ClassAnalyticsProps) => {
   // Calculate monthly performance data
   const monthlyPerformance = assignments
     .filter(a => a.status === "completed")
-    .reduce((acc: {name: string, completed: number, total: number}[], assignment) => {
+    .reduce((acc: {[key: string]: {completed: number, total: number}}[], assignment) => {
       const date = new Date(assignment.date);
       const monthYear = date.toLocaleString('default', { month: 'short', year: '2-digit' });
       
       const existingMonth = acc.find(item => item.name === monthYear);
       if (existingMonth) {
         existingMonth.completed += 1;
-        existingMonth.total += 1;
       } else {
-        acc.push({ name: monthYear, completed: 1, total: 1 });
+        acc.push({ name: monthYear, completed: 1, total: 0 });
       }
       return acc;
     }, []);

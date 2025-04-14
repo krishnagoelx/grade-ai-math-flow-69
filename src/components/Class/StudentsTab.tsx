@@ -2,11 +2,17 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Upload, Download, PlusCircle } from "lucide-react";
+import { Search, Upload, Download, PlusCircle, MoreVertical } from "lucide-react";
 import { Student } from "@/types/class";
 import { useToast } from "@/hooks/use-toast";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useIsMobile } from "@/hooks/use-mobile";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
 import {
   Tooltip,
   TooltipContent,
@@ -41,6 +47,27 @@ export const StudentsTab = ({ students }: StudentsTabProps) => {
     toast({
       title: "Add Student",
       description: "Opening form to add a new student"
+    });
+  };
+
+  const handleViewStudent = (id: string) => {
+    toast({
+      title: "View Student Profile",
+      description: `Viewing student with ID: ${id}`,
+    });
+  };
+  
+  const handleViewAssignments = (id: string) => {
+    toast({
+      title: "View Assignments",
+      description: `Viewing assignments for student with ID: ${id}`,
+    });
+  };
+  
+  const handleEditDetails = (id: string) => {
+    toast({
+      title: "Edit Student Details",
+      description: `Editing details for student with ID: ${id}`,
     });
   };
 
@@ -113,11 +140,12 @@ export const StudentsTab = ({ students }: StudentsTabProps) => {
         <div className="overflow-x-auto">
           <div className="sticky top-0 z-10 bg-muted/50 border-b">
             <div className={isMobile ? "min-w-[600px]" : "min-w-[600px]"}>
-              <div className="grid grid-cols-4 h-10">
+              <div className="grid grid-cols-5 h-10">
                 <div className="px-4 flex items-center font-medium text-muted-foreground">Name</div>
                 <div className="px-4 flex items-center font-medium text-muted-foreground">Class</div>
                 <div className="px-4 flex items-center font-medium text-muted-foreground">Roll No.</div>
                 <div className="px-4 flex items-center font-medium text-muted-foreground">Mobile</div>
+                <div className="px-4 flex items-center font-medium text-muted-foreground text-center">Actions</div>
               </div>
             </div>
           </div>
@@ -127,12 +155,32 @@ export const StudentsTab = ({ students }: StudentsTabProps) => {
               {filteredStudents.map((student) => (
                 <div 
                   key={student.id} 
-                  className="grid grid-cols-4 border-b hover:bg-muted/30 transition-colors"
+                  className="grid grid-cols-5 border-b hover:bg-muted/30 transition-colors"
                 >
                   <div className="p-4 truncate">{student.name}</div>
                   <div className="p-4">{student.class}</div>
                   <div className="p-4">{student.roll}</div>
                   <div className="p-4">{student.mobile || "-"}</div>
+                  <div className="p-4 flex justify-center">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon">
+                          <MoreVertical size={16} />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-56 bg-white">
+                        <DropdownMenuItem onClick={() => handleViewStudent(student.id)}>
+                          <span>View Profile</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleViewAssignments(student.id)}>
+                          <span>View Assignments</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleEditDetails(student.id)}>
+                          <span>Edit Details</span>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
                 </div>
               ))}
               {filteredStudents.length === 0 && (
@@ -147,4 +195,3 @@ export const StudentsTab = ({ students }: StudentsTabProps) => {
     </div>
   );
 };
-
