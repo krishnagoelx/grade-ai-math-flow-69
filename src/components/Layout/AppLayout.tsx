@@ -12,7 +12,7 @@ export const AppLayout = () => {
       {isDashboard && <MobileHeader />}
       <main className={cn(
         "flex-1 overflow-auto px-4 py-5 transition-all duration-300",
-        !isDashboard && "pt-2" // Less padding when no header
+        !isDashboard && "pt-5" // Consistent padding when no header
       )}>
         <div className="mx-auto max-w-3xl pb-6">
           <Outlet />

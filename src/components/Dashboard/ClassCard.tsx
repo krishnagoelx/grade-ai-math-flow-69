@@ -37,7 +37,7 @@ export const ClassCard = ({
           )}
         </div>
         
-        <div className="flex items-center justify-between text-sm text-muted-foreground">
+        <div className="flex justify-between text-sm text-muted-foreground">
           <div className="flex items-center gap-1.5">
             <Users size={16} />
             <span>{studentCount} Students</span>
